@@ -1,0 +1,40 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+
+<div>
+    <h2>Login to Your Account</h2>
+
+    {% if message %}
+        <div style="color: red;">
+            {{ message }}
+        </div>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        
+        <!-- Username -->
+        <div>
+            <i class="fa fa-user form-icon"></i>
+            <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
+            <label for="username">Username</label>
+        </div>
+
+        <!-- Password -->
+        <div class="form-floating">
+            <i class="fa fa-lock form-icon"></i>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+            <label for="password">Password</label>
+            <i class="fa fa-eye toggle-password" id="toggle-icon" onclick="togglePassword()"></i>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-login">Login</button>
+    </form>
+
+    <div class="register-footer">
+        Don't have an account? <a href="{% url 'register' %}">Register here</a>
+    </div>
+</div>
+
+{% endblock %}
