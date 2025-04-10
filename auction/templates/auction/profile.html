@@ -1,96 +1,17 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
-
-<script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + "=")) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    function edit(id, postMesg) {
-        document.querySelector(`#post_${id}`).style.display = "none";
-        document.querySelector(`#post_${id}form`).style.display = "block";
-        document.querySelector(`#editedContent_${id}`).value = postMesg;
-    }
-
-    function cancel(id) {
-        document.querySelector(`#post_${id}`).style.display = "block";
-        document.querySelector(`#post_${id}form`).style.display = "none";
-        document.querySelector(`#editedContent_${id}`).value = "";
-    }
-
-    function save(id) {
-        event.preventDefault();
-        const text = document.querySelector(`#editedContent_${id}`).value;
-        const post = document.querySelector(`#post_${id} .post-content`);
-
-        fetch(`/edit/${id}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": getCookie("csrftoken")
-            },
-            body: JSON.stringify({
-                content: text
-            })
-        })
-        .then(response => response.json())
-        .then(result => {  
-            post.innerHTML = result.data;              
-            document.querySelector(`#post_${id}`).style.display = "block";
-            document.querySelector(`#post_${id}form`).style.display = "none";
-        })
-    }
-
-    function like(id, liked) {
-        const btn = document.querySelector(`#like_${id}`);
-        const counter = document.querySelector(`#counter_${id}`);
-        let likes = parseInt(counter.innerHTML);
-        
-        btn.classList.remove('fa-solid');
-        btn.classList.remove('fa-regular');
-
-        if (liked === true) {
-            fetch(`/unlike/${id}`)
-            .then(response => response.json())
-            .then(result => {
-                likes--;
-                counter.innerHTML = likes;
-                btn.classList.add('fa-regular');
-                btn.setAttribute("onclick", `like(${id}, false)`);
-            })
-        }
-        else {
-            fetch(`/like/${id}`)
-            .then(response => response.json)
-            .then(result => {
-                likes++;
-                counter.innerHTML = likes;
-                btn.classList.add('fa-solid');
-                btn.setAttribute("onclick", `like(${id}, true)`);
-            })
-        }
-    }
-</script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <div class="container mt-4">
     <div class="card p-3 shadow-sm mb-4">
         <h3 class="mb-0">{{ loadedUser.username }}</h3>
         <small class="text-muted d-flex align-items-center gap-3 mt-2">
-            <span> Followers: {{ follower.count }} | </span>
-            <span> Following: {{ following.count }} | </span>
-            
+            <span> 👥 Followers: {{ follower.count }} | </span>
+            <span> ➡️ Following: {{ following.count }} | </span>
+            <a href="{% url 'user_listings' loadedUser.id %}" class="text-primary text-decoration-none">
+                <div> Listings</div>
+            </a>
         </small>
         {% if user.is_authenticated and user != loadedUser %}
             {% if follows %}
@@ -135,7 +56,7 @@
             <div id="post_{{ post.id }}form" style="display: none;">
                 <form onsubmit="save('{{ post.id }}')">
                     <textarea class="form-control my-2" id="editedContent_{{ post.id }}" rows="3"></textarea>
-                    <button type="submit" class="btn btn-success btn-sm" onclick="save('{{ post.id }}')">Save</button>
+                    <button type="submit" class="btn btn-success btn-sm">Save</button>
                     <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="cancel('{{ post.id }}')">Cancel</button>
                 </form>
             </div>
@@ -171,4 +92,72 @@
         </ul>
     </nav>
 </div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function edit(id, content) {
+        document.querySelector(`#post_${id}`).style.display = "none";
+        document.querySelector(`#post_${id}form`).style.display = "block";
+        document.querySelector(`#editedContent_${id}`).value = content;
+    }
+
+    function cancel(id) {
+        document.querySelector(`#post_${id}`).style.display = "block";
+        document.querySelector(`#post_${id}form`).style.display = "none";
+    }
+
+    function save(id) {
+        event.preventDefault();
+        const text = document.querySelector(`#editedContent_${id}`).value;
+        const post = document.querySelector(`#post_${id} .post-content`);
+
+        fetch(`/edit/${id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ content: text })
+        })
+        .then(response => response.json())
+        .then(result => {
+            post.innerHTML = result.data;
+            document.querySelector(`#post_${id}`).style.display = "block";
+            document.querySelector(`#post_${id}form`).style.display = "none";
+        });
+    }
+
+    function like(id, liked) {
+        const btn = document.querySelector(`#like_${id}`);
+        const counter = document.querySelector(`#counter_${id}`);
+        let likes = parseInt(counter.innerText);
+
+        btn.classList.remove('fa-solid', 'fa-regular');
+
+        const endpoint = liked ? `/unlike/${id}` : `/like/${id}`;
+
+        fetch(endpoint)
+        .then(response => response.json())
+        .then(() => {
+            likes = liked ? likes - 1 : likes + 1;
+            counter.innerText = likes;
+            btn.classList.add(liked ? 'fa-regular' : 'fa-solid', 'fa-thumbs-up');
+            btn.setAttribute("onclick", `like('${id}', ${!liked})`);
+        });
+    }
+</script>
 {% endblock %}

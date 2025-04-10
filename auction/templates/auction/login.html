@@ -1,40 +1,312 @@
+
 {% extends "auction/layout.html" %}
-
+{% load static %}
 {% block body %}
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background: #f2f2f2;
+    }
 
-<div>
-    <h2>Login to Your Account</h2>
+    .login-container {
+        display: flex;
+        min-height: 100vh;
+    }
 
-    {% if message %}
-        <div style="color: red;">
-            {{ message }}
+    /* === Left Panel === */
+    .left-panel {
+        flex: 1;
+        background: linear-gradient(135deg, #ff4e50, #8e44ad);
+        color: white;
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .left-panel::before {
+        content: "";
+        background: url("{% static 'images/background.png' %}") no-repeat center center;
+        background-size: cover;
+        opacity: 0.15;
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .left-panel * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .logo {
+        width: 110px;
+        height: 110px;
+        border-radius: 25px;
+        background: #fff;
+        padding: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        margin-bottom: 2rem;
+        animation: fadeSlideUp 1s ease-out forwards;
+        object-fit: contain;
+    }
+
+    .left-panel p {
+        max-width: 400px;
+        font-size: 1.2rem;
+        font-weight: 500;
+        line-height: 1.8;
+        animation: fadeSlideUp 1.2s ease-out forwards;
+    }
+
+    .social-icons {
+        margin-top: 2rem;
+    }
+
+    .social-icons i {
+        font-size: 1.3rem;
+        margin: 0 10px;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .social-icons i:hover {
+        color: #f1c40f;
+        transform: scale(1.2);
+    }
+
+    /* === Right Panel === */
+    .right-panel {
+        flex: 1;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+    }
+
+    .login-wrapper {
+        width: 100%;
+        max-width: 440px;
+        padding: 2rem;
+        border-radius: 16px;
+        animation: fadeSlideIn 0.6s ease-out forwards;
+    }
+
+    .login-wrapper h2 {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: #212529;
+    }
+
+    .form-floating {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-floating input {
+        padding: 1rem 1rem 1rem 3rem;
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s ease;
+        width: 100%;
+    }
+
+    .form-floating input:focus {
+        border-color: #8e44ad;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.2);
+    }
+
+    .form-floating label {
+        position: absolute;
+        top: 50%;
+        left: 3rem;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #6c757d;
+        font-size: 0.95rem;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .form-floating input:focus + label,
+    .form-floating input:not(:placeholder-shown) + label {
+        top: 0.4rem;
+        left: 2.8rem;
+        font-size: 0.75rem;
+        color: #8e44ad;
+        background: #fff;
+        padding: 0 0.25rem;
+    }
+
+    .form-icon {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        transition: color 0.2s ease;
+    }
+
+    .toggle-password:hover {
+        color: #8e44ad;
+    }
+
+    .btn-login {
+        width: 100%;
+        background-color: #e74c3c;
+        border: none;
+        color: white;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+    }
+
+    .btn-login:hover {
+        background-color: #c0392b;
+    }
+
+    .register-footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.95rem;
+    }
+
+    .register-footer a {
+        color: #8e44ad;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .register-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .alert-message {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+        border-radius: 8px;
+        padding: 0.75rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+
+    @keyframes fadeSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .login-container {
+            flex-direction: column;
+        }
+
+        .left-panel,
+        .right-panel {
+            width: 100%;
+        }
+
+        .left-panel {
+            padding: 3rem 1rem;
+        }
+    }
+</style>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById("password");
+        const icon = document.getElementById("toggle-icon");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
+</script>
+
+<div class="login-container">
+    <!-- Left Panel -->
+    <div class="left-panel">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+        <p>Discover amazing auctions and bid smart with our dynamic platform.</p>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+        <div class="login-wrapper">
+            <h2>Sign In</h2>
+
+            {% if message %}
+                <div class="alert-message">
+                    {{ message }}
+                </div>
+            {% endif %}
+
+            <form action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="form-floating">
+                    <i class="fa fa-user form-icon"></i>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
+                    <label for="username">Username</label>
+                </div>
+
+                <div class="form-floating">
+                    <i class="fa fa-lock form-icon"></i>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                    <label for="password">Password</label>
+                    <i class="fa fa-eye toggle-password" id="toggle-icon" onclick="togglePassword()"></i>
+                </div>
+
+                <button type="submit" class="btn-login">LOGIN</button>
+            </form>
+
+            <div class="register-footer">
+                Don't have an account? <a href="{% url 'register' %}">Register here</a>
+            </div>
         </div>
-    {% endif %}
-
-    <form action="{% url 'login' %}" method="POST">
-        {% csrf_token %}
-        
-        <!-- Username -->
-        <div>
-            <i class="fa fa-user form-icon"></i>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Username" required>
-            <label for="username">Username</label>
-        </div>
-
-        <!-- Password -->
-        <div class="form-floating">
-            <i class="fa fa-lock form-icon"></i>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-            <label for="password">Password</label>
-            <i class="fa fa-eye toggle-password" id="toggle-icon" onclick="togglePassword()"></i>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-login">Login</button>
-    </form>
-
-    <div class="register-footer">
-        Don't have an account? <a href="{% url 'register' %}">Register here</a>
     </div>
 </div>
-
 {% endblock %}
