@@ -35,6 +35,30 @@
         font-weight: 600;
         color: #0d6efd;
     }
+
+    /* 🔧 Fix comment overflow */
+    .list-group-item {
+        word-wrap: break-word;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    /* Optional: Improve button spacing */
+    form button {
+        margin-top: 8px;
+    }
+    .fade-toggle {
+        transition: all 0.4s ease;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+    }
+    
+    .fade-toggle.show {
+        max-height: 500px; /* enough for long content */
+        opacity: 1;
+    }
+    
 </style>
 
 <!-- Background Image -->
@@ -42,6 +66,7 @@
 
 <div class="container my-5">
     <div class="row">
+        <!-- Left Column: Listing Details -->
         <div class="col-lg-5 mb-4">
             <h2 class="section-title">{{ listing.title }}</h2>
 
@@ -54,7 +79,18 @@
             {% endif %}
 
             <ul class="list-group mb-3">
-                <li class="list-group-item"><strong>Description:</strong> {{ listing.description }}</li>
+                <li class="list-group-item">
+                    <strong>Description:</strong>
+                    <span id="desc-preview">{{ listing.description|truncatechars:150 }}</span>
+                    <div id="desc-full" class="fade-toggle mt-1">
+                        {{ listing.description }}
+                    </div>
+                    {% if listing.description|length > 150 %}
+                        <br>
+                        <button class="btn btn-sm btn-link p-0" onclick="toggleDescription()" id="toggle-btn">Read more</button>
+                    {% endif %}
+                </li>
+                               
                 <li class="list-group-item"><strong>Category:</strong> {{ listing.category }}</li>
                 <li class="list-group-item"><strong>Created by:</strong> {{ listing.owner }}</li>
                 <li class="list-group-item"><strong>Current Price:</strong> ${{ listing.current_price }}</li>
@@ -64,7 +100,7 @@
             </ul>
 
             {% if user.is_authenticated %}
-                <form method="post" class="mb-3">
+                <form method="post">
                     {% csrf_token %}
                     <button name="watchlist_toggle" class="btn btn-outline-dark w-100">
                         {% if in_watchlist %}
@@ -78,7 +114,7 @@
 
             {% if listing.isActive %}
                 {% if user.is_authenticated and not is_creator %}
-                    <form method="post" onsubmit="return validateBid();" class="mb-3">
+                    <form method="post" onsubmit="return validateBid();">
                         {% csrf_token %}
                         <div class="input-group">
                             <input type="number" id="bidInput" name="bid" class="form-control" step="0.01" min="0" placeholder="Your bid" required>
@@ -91,7 +127,7 @@
             {% endif %}
 
             {% if user.is_authenticated and is_creator and listing.isActive %}
-                <form method="post" class="mb-3">
+                <form method="post">
                     {% csrf_token %}
                     <button name="close_auction" class="btn btn-danger w-100">Close Auction</button>
                 </form>
@@ -102,8 +138,10 @@
             {% endif %}
         </div>
 
+        <!-- Right Column: Comments -->
         <div class="col-lg-7">
             <h4 class="section-title mb-3">Comments</h4>
+
             {% if user.is_authenticated %}
                 <form method="post" class="mb-4">
                     {% csrf_token %}
@@ -114,18 +152,32 @@
 
             <ul class="list-group">
                 {% for comment in comments %}
-                    <li class="list-group-item">
-                        <strong>{{ comment.user }}:</strong> {{ comment.content }}
-                    </li>
+                <div class="mb-3">
+                    <strong>{{ comment.user }}</strong><br>
+                    {% if comment.content|length > 150 %}
+                        <span id="comment-preview-{{ forloop.counter }}">
+                            {{ comment.content|truncatechars:150 }}
+                        </span>
+                        <div id="comment-full-{{ forloop.counter }}" class="fade-toggle mt-1">
+                            {{ comment.content }}
+                        </div>
+                        <br>
+                        <button class="btn btn-sm btn-link p-0" onclick="toggleComment({{ forloop.counter }})" id="comment-btn-{{ forloop.counter }}">Read more</button>
+                    {% else %}
+                        <span>{{ comment.content }}</span>
+                    {% endif %}
+                </div>
                 {% empty %}
-                    <li class="list-group-item text-muted">No comments yet.</li>
+                    <p>No comments yet.</p>
                 {% endfor %}
+                
+            
             </ul>
         </div>
     </div>
 </div>
 
-<!-- Custom Script -->
+<!-- Script for Bid Validation -->
 <script>
     function validateBid() {
         const input = document.getElementById('bidInput');
@@ -136,6 +188,38 @@
         }
         return true;
     }
+        function toggleDescription() {
+            const preview = document.getElementById('desc-preview');
+            const full = document.getElementById('desc-full');
+            const button = document.getElementById('toggle-btn');
+    
+            if (preview.style.display === "none") {
+                preview.style.display = "inline";
+                full.style.display = "none";
+                button.innerText = "Read more";
+            } else {
+                preview.style.display = "none";
+                full.style.display = "inline";
+                button.innerText = "Read less";
+            }
+        }
+    
+        function toggleComment(id) {
+            const preview = document.getElementById(`comment-preview-${id}`);
+            const full = document.getElementById(`comment-full-${id}`);
+            const button = document.getElementById(`comment-btn-${id}`);
+    
+            if (preview.style.display === "none") {
+                preview.style.display = "inline";
+                full.style.display = "none";
+                button.innerText = "Read more";
+            } else {
+                preview.style.display = "none";
+                full.style.display = "inline";
+                button.innerText = "Read less";
+            }
+        }
+    
 </script>
 
 {% endblock %}

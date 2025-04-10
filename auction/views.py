@@ -148,7 +148,7 @@ def listing(request,listing_id):
             in_watchlist=not in_watchlist
             # return HttpResponseRedirect(reverse("listing",args=[listing.id]))
         elif 'close_auction' in request.POST:
-            listing.is_active=False
+            listing.isActive=False
             listing.save()
             message="Auction closed Successfully"
             message_type="success"
