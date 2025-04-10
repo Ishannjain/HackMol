@@ -188,37 +188,42 @@
         }
         return true;
     }
-        function toggleDescription() {
-            const preview = document.getElementById('desc-preview');
-            const full = document.getElementById('desc-full');
-            const button = document.getElementById('toggle-btn');
+    function toggleDescription() {
+        const preview = document.getElementById('desc-preview');
+        const full = document.getElementById('desc-full');
+        const button = document.getElementById('toggle-btn');
     
-            if (preview.style.display === "none") {
-                preview.style.display = "inline";
-                full.style.display = "none";
-                button.innerText = "Read more";
-            } else {
-                preview.style.display = "none";
-                full.style.display = "inline";
-                button.innerText = "Read less";
-            }
+        const isOpen = full.classList.contains("show");
+    
+        if (isOpen) {
+            preview.style.display = "inline";
+            full.classList.remove("show");
+            button.innerText = "Read more";
+        } else {
+            preview.style.display = "none";
+            full.classList.add("show");
+            button.innerText = "Read less";
         }
+    }
     
-        function toggleComment(id) {
-            const preview = document.getElementById(`comment-preview-${id}`);
-            const full = document.getElementById(`comment-full-${id}`);
-            const button = document.getElementById(`comment-btn-${id}`);
+    function toggleComment(id) {
+        const preview = document.getElementById(`comment-preview-${id}`);
+        const full = document.getElementById(`comment-full-${id}`);
+        const button = document.getElementById(`comment-btn-${id}`);
     
-            if (preview.style.display === "none") {
-                preview.style.display = "inline";
-                full.style.display = "none";
-                button.innerText = "Read more";
-            } else {
-                preview.style.display = "none";
-                full.style.display = "inline";
-                button.innerText = "Read less";
-            }
+        const isOpen = full.classList.contains("show");
+    
+        if (isOpen) {
+            preview.style.display = "inline";
+            full.classList.remove("show");
+            button.innerText = "Read more";
+        } else {
+            preview.style.display = "none";
+            full.classList.add("show");
+            button.innerText = "Read less";
         }
+    }
+    
     
 </script>
 
