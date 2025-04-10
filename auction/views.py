@@ -339,7 +339,7 @@ def following(request):
 
     followed_users = Follow.objects.filter(follower=currUser).values_list('followed', flat=True)
 
-    posts = Post.objects.filter(owner__in=followed_users).order_by('date')
+    posts = Post.objects.filter(owner__in=followed_users).order_by('-date')
 
     paginator = Paginator(posts, 10)
     page_number = request.GET.get('page')
