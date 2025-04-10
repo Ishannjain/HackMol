@@ -50,3 +50,8 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
     content = models.TextField(max_length=300)
     date = models.DateTimeField()
+
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")

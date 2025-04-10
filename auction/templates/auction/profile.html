@@ -1,0 +1,160 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="card p-3 shadow-sm mb-4">
+        <h3 class="mb-0">{{ loadedUser.username }}</h3>
+        <small class="text-muted d-flex align-items-center gap-3 mt-2">
+            <span> Followers: {{ follower.count }} | </span>
+            <span> Following: {{ following.count }} | </span>
+            
+        </small>
+        {% if user.is_authenticated and user != loadedUser %}
+            {% if follows %}
+                <a href="{% url 'unfollow' loadedUser.id %}" class="btn btn-outline-danger btn-sm mt-2">Unfollow</a>
+            {% else %}
+                <a href="{% url 'follow' loadedUser.id %}" class="btn btn-outline-primary btn-sm mt-2">Follow</a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <h5 class="mb-3">Posts:</h5>
+
+    {% for post in page_obj %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div id="post_{{ post.id }}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <a href="{% url 'profile' post.owner.id %}" class="fw-bold text-dark">{{ post.owner }}</a>
+                        <p class="post-content my-2">{{ post.content }}</p>
+                        <small class="text-muted">{{ post.date }}</small>
+                    </div>
+                    {% if user == post.owner %}
+                        <button class="btn btn-sm btn-outline-success" onclick="edit('{{ post.id }}', `{{ post.content|escapejs }}`)">Edit</button>
+                    {% endif %}
+                </div>
+
+                <div class="mt-2">
+                    {% if not user.is_authenticated %}
+                        <i class="fa-regular fa-thumbs-up me-1"></i>
+                    {% else %}
+                        {% if user in post.likes.all %}
+                            <i class="fa-solid fa-thumbs-up like-icon text-primary" id="like_{{ post.id }}" onclick="like('{{ post.id }}', true)"></i>
+                        {% else %}
+                            <i class="fa-regular fa-thumbs-up like-icon" id="like_{{ post.id }}" onclick="like('{{ post.id }}', false)"></i>
+                        {% endif %}
+                    {% endif %}
+                    <span id="counter_{{ post.id }}">{{ post.likes.count }}</span> likes
+                </div>
+            </div>
+
+            <div id="post_{{ post.id }}form" style="display: none;">
+                <form onsubmit="save('{{ post.id }}')">
+                    <textarea class="form-control my-2" id="editedContent_{{ post.id }}" rows="3"></textarea>
+                    <button type="submit" class="btn btn-success btn-sm">Save</button>
+                    <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="cancel('{{ post.id }}')">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">No posts to show.</p>
+    {% endfor %}
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><a class="page-link">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            const cookies = document.cookie.split(";");
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function edit(id, content) {
+        document.querySelector(`#post_${id}`).style.display = "none";
+        document.querySelector(`#post_${id}form`).style.display = "block";
+        document.querySelector(`#editedContent_${id}`).value = content;
+    }
+
+    function cancel(id) {
+        document.querySelector(`#post_${id}`).style.display = "block";
+        document.querySelector(`#post_${id}form`).style.display = "none";
+    }
+
+    function save(id) {
+        event.preventDefault();
+        const text = document.querySelector(`#editedContent_${id}`).value;
+        const post = document.querySelector(`#post_${id} .post-content`);
+
+        fetch(`/edit/${id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            body: JSON.stringify({ content: text })
+        })
+        .then(response => response.json())
+        .then(result => {
+            post.innerHTML = result.data;
+            document.querySelector(`#post_${id}`).style.display = "block";
+            document.querySelector(`#post_${id}form`).style.display = "none";
+        });
+    }
+
+    function like(id, liked) {
+        const btn = document.querySelector(`#like_${id}`);
+        const counter = document.querySelector(`#counter_${id}`);
+        let likes = parseInt(counter.innerText);
+
+        btn.classList.remove('fa-solid', 'fa-regular');
+
+        const endpoint = liked ? `/unlike/${id}` : `/like/${id}`;
+
+        fetch(endpoint)
+        .then(response => response.json())
+        .then(() => {
+            likes = liked ? likes - 1 : likes + 1;
+            counter.innerText = likes;
+            btn.classList.add(liked ? 'fa-regular' : 'fa-solid', 'fa-thumbs-up');
+            btn.setAttribute("onclick", `like('${id}', ${!liked})`);
+        });
+    }
+</script>
+{% endblock %}

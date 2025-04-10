@@ -1,0 +1,66 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-4">All Posts</h2>
+
+    {% for post in page_obj %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <a href="{% url 'profile' post.owner.id %}" class="fw-bold text-decoration-none">
+                    {{ post.owner }}
+                </a>
+                <small class="text-muted">{{ post.date }}</small>
+            </div>
+
+            <p class="card-text">{{ post.content }}</p>
+
+            <div class="text-muted d-flex align-items-center">
+                {% if user in post.likes.all %}
+                    <i class="fa-solid fa-thumbs-up me-2 text-primary"></i>
+                {% else %}
+                    <i class="fa-regular fa-thumbs-up me-2"></i>
+                {% endif %}
+                <span>{{ post.likes.count }}</span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info text-center" role="alert">
+        No posts yet.
+    </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    <nav aria-label="Post navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Next</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

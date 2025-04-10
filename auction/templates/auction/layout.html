@@ -27,7 +27,7 @@
             </li>
             {% if user.is_authenticated %}
             <li class="nav-item">
-                <a class="nav-link" href="#">Profile</a>
+                <a class="nav-link" href="{% url 'profile' user.id %}">Profile</a>
             </li>
             
             <li class="nav-item">
@@ -41,7 +41,7 @@
                 <a class="nav-link" href="{% url 'posts' %}">Posts</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Followings</a>
+                <a class="nav-link" href="{% url 'following' %}">Followings</a>
             </li>
             
                 <li class="nav-item">

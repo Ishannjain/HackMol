@@ -236,3 +236,66 @@ def newPost(request):
         )
         post.save()
         return HttpResponseRedirect(reverse("posts"))
+    
+
+def following(request):
+    currUser = request.user
+
+    followed_users = Follow.objects.filter(follower=currUser).values_list('followed', flat=True)
+
+    posts = Post.objects.filter(owner__in=followed_users).order_by('date')
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    return render(request, "auction/following.html", {
+        "posts": posts,
+        "user": currUser,
+        "page_obj": page
+    })
+
+def profile(request, user_id):
+    currUser = request.user
+    user = User.objects.get(pk=user_id)
+    followings = Follow.objects.filter(follower = user).values_list('followed', flat=True)
+    followers = Follow.objects.filter(followed = user).values_list('follower', flat=True)
+
+    posts = Post.objects.filter(owner = user).order_by('date').reverse()
+
+    follows = currUser.id in followers
+
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+
+    return render(request, "auction/profile.html", {
+        "loadedUser": user,
+        "user": currUser,
+        "following": followings,
+        "follower": followers,
+        "posts": posts,
+        "follows": follows,
+        "page_obj": page
+    })
+
+
+def follow(request, user_id):
+    currUser = request.user
+    user = User.objects.get(pk = user_id)
+    follow = Follow(
+        follower = currUser,
+        followed = user 
+    )
+    follow.save()
+    return HttpResponseRedirect(reverse("profile", args=(user.id,)))
+
+
+def unfollow(request, user_id):
+    currUser = request.user
+    user = User.objects.get(pk = user_id)
+    print(user, currUser)
+    follow = Follow.objects.filter(follower = currUser, followed = user)
+   
+    follow.delete()
+    return HttpResponseRedirect(reverse("profile", args=(user.id,)))
