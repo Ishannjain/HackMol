@@ -1,0 +1,35 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+<div class="container my-5">
+    <h2 class="mb-4 fw-bold text-center">📌 {{ user.username }}'s Watchlist</h2>
+
+    {% if all_listings %}
+    <div class="row g-4">
+        {% for listing in all_listings %}
+        <div class="col-sm-6 col-lg-4">
+            <div class="card shadow-sm h-100 border-0 rounded-4">
+                {% if listing.imageUrl %}
+                <img src="{{ listing.imageUrl }}" class="card-img-top rounded-top-4" style="height: 200px; object-fit: cover;" alt="{{ listing.title }}">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-semibold mb-2">{{ listing.title }}</h5>
+                    <p class="card-text text-muted mb-2" style="min-height: 60px;">{{ listing.description|truncatewords:18 }}</p>
+                    <div class="mb-3">
+                        <span class="badge bg-success fs-6 px-3 py-2">Rs. {{ listing.current_price }}</span>
+                    </div>
+                    <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary mt-auto w-100">🔍 View Listing</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center mt-5">
+        <h4 class="text-muted">Your watchlist is empty 🕵️</h4>
+        <p class="text-secondary">Start exploring and add items you're interested in!</p>
+        <a href="{% url 'index' %}" class="btn btn-primary mt-2">Browse Listings</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

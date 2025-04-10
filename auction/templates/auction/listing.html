@@ -1,0 +1,106 @@
+{% extends "auction/layout.html" %}
+{% block body %}
+
+
+<!-- Background Image -->
+<div class="background-gavel"></div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-5 mb-4">
+            <h2 class="section-title">{{ listing.title }}</h2>
+
+            {% if listing.imageUrl %}
+                <img src="{{ listing.imageUrl }}" class="img-fluid rounded shadow mb-3 listing-img" alt="Listing Image">
+            {% endif %}
+
+            {% if message %}
+                <div class="alert alert-{{ message_type }}">{{ message }}</div>
+            {% endif %}
+
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Description:</strong> {{ listing.description }}</li>
+                <li class="list-group-item"><strong>Category:</strong> {{ listing.category }}</li>
+                <li class="list-group-item"><strong>Created by:</strong> {{ listing.owner }}</li>
+                <li class="list-group-item"><strong>Current Price:</strong> ${{ listing.current_price }}</li>
+                {% if highest_bid %}
+                    <li class="list-group-item text-success"><strong>Highest Bidder:</strong> {{ highest_bid.user }}</li>
+                {% endif %}
+            </ul>
+
+            {% if user.is_authenticated %}
+                <form method="post" class="mb-3">
+                    {% csrf_token %}
+                    <button name="watchlist_toggle" class="btn btn-outline-dark w-100">
+                        {% if in_watchlist %}
+                            Remove from Watchlist
+                        {% else %}
+                            Add to Watchlist
+                        {% endif %}
+                    </button>
+                </form>
+            {% endif %}
+
+            {% if listing.isActive %}
+                {% if user.is_authenticated and not is_creator %}
+                    <form method="post" onsubmit="return validateBid();" class="mb-3">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="number" id="bidInput" name="bid" class="form-control" step="0.01" min="0" placeholder="Your bid" required>
+                            <button name="place_bid" class="btn btn-primary">Place Bid</button>
+                        </div>
+                    </form>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-danger">This Auction is over.</div>
+            {% endif %}
+
+            {% if user.is_authenticated and is_creator and listing.isActive %}
+                <form method="post" class="mb-3">
+                    {% csrf_token %}
+                    <button name="close_auction" class="btn btn-danger w-100">Close Auction</button>
+                </form>
+            {% endif %}
+
+            {% if user.is_authenticated and winner and is_winner %}
+                <div class="alert alert-success text-center">🎉 You won the Auction!</div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-7">
+            <h4 class="section-title mb-3">Comments</h4>
+            {% if user.is_authenticated %}
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    <textarea name="comment" class="form-control mb-2" rows="3" placeholder="Write a comment..." required></textarea>
+                    <button name="comment_submit" class="btn btn-success">Add Comment</button>
+                </form>
+            {% endif %}
+
+            <ul class="list-group">
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <strong>{{ comment.user }}:</strong> {{ comment.content }}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No comments yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Script -->
+<script>
+    function validateBid() {
+        const input = document.getElementById('bidInput');
+        const value = parseFloat(input.value);
+        if (!value || value <= 0) {
+            alert("Please enter a valid bid greater than 0.");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+{% endblock %}

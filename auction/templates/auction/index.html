@@ -2,5 +2,21 @@
 {% block body %}
 
     
+<div class="category-container">
+    {% for category in all_categories %}
+        <a href="{% url 'category' category %}" class="category-card" onclick="notifyCategoryClick('{{ category }}')">
+            {{ category }}
+        </a>
+    {% empty %}
+        <p class="no-categories">No available categories</p>
+    {% endfor %}
+</div>
 
+<script>
+    function notifyCategoryClick(categoryName) {
+        console.log("Clicked category:", categoryName);
+        // Optionally show a popup:
+        // alert("You selected: " + categoryName);
+    }
+</script>
 {% endblock %}
