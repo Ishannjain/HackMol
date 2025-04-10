@@ -78,6 +78,27 @@
         background-color: #695eff;
         transition: width 0.3s ease;
     }
+
+    select.form-control.track {
+        padding: 10px 12px;
+        font-size: 16px;
+        color: #333; /* Ensure text is visible */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 12px; /* Optional, makes it look modern */
+        box-shadow: none;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        height: auto;
+    }
+
+    select.form-control.track:focus {
+        outline: none;
+        border-color: #7c3aed; /* violet border */
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); /* glow effect */
+    }
+
 </style>
 
 <div class="container my-5">
@@ -111,29 +132,27 @@
 
         <div class="mb-3">
             <label for="imageUrl" class="form-label"><strong>Image URL <span class="text-danger">*</span></strong></label>
-            <input type="url" class="form-control track" id="imageUrl" name="imageUrl" required>
+            <input type="url" class="form-control track" id="imageUrl" name="imageUrl">
             <div class="invalid-feedback">Please provide a valid image URL.</div>
             <img id="previewImage" class="image-preview" alt="Image Preview">
         </div>
 
         <div class="mb-3">
             <label for="category" class="form-label"><strong>Category <span class="text-danger">*</span></strong></label>
-            <input list="categoryOptions" class="form-control track" id="category" name="category" required>
-            <datalist id="categoryOptions">
+            <select class="form-control track" id="category" name="category">
                 {% for category in categories %}
-                    <option value="{{ category.title }}">
+                    <option value="{{ category.title }}">{{ category }}</option>
                 {% endfor %}
-            </datalist>
+            </select>
             <div class="invalid-feedback">Please select a category.</div>
         </div>
         
         <div class="mb-3">
             <label for="mode" class="form-label"><strong>Mode <span class="text-danger">*</span></strong></label>
-            <input list="modeOptions" class="form-control track" id="mode" name="mode" value="public" required>
-            <datalist id="modeOptions">
-                <option value="public">
-                <option value="private">
-            </datalist>
+            <select class="form-control track" id="mode" name="mode" required>
+                <option value="private">Private</option>
+                <option value="public" selected>Public</option>
+            </select>
         </div>
         
 

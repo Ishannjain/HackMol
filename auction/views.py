@@ -115,6 +115,7 @@ def create_listing(request):
 
 
         cat_id=request.POST.get("category")
+        
         category = Category.objects.filter(title = cat_id).first()
 
         if mode == "private" :
