@@ -63,6 +63,23 @@
 <div class="container mt-4">
     <div class="card p-3 shadow-sm mb-4">
         <h3 class="mb-0">{{ loadedUser.username }}</h3>
+        <div>
+            <h4><strong>Rating: </strong>{{ loadedUser.rating }}</h4>
+        </div>
+        {% if user != loadedUser and user not in loadedUser.noOfRatings.all %}
+            <form action="{% url 'profile' loadedUser.id %}" method="post" class="rating-form p-2 border rounded bg-light" style="max-width: 300px; font-size: 0.9rem;">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <strong>Rate {{ loadedUser.username }}</strong>
+                </div>
+                <div class="form-group mb-2">
+                    <input type="number" name="rating" class="form-control form-control-sm" min="1" max="5" required placeholder="1 - 5">
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-primary">Rate</button>
+            </form>
+        {% endif %}
+    
+    
         <small class="text-muted d-flex align-items-center gap-3 mt-2">
             <span> Followers: {{ follower.count }} | </span>
             <span> Following: {{ following.count }} | </span>

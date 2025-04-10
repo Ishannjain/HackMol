@@ -3,6 +3,8 @@ from django.db import models
 
 
 class User(AbstractUser):
+    rating=models.DecimalField(max_digits=3,decimal_places=2,default=0)
+    noOfRatings = models.ManyToManyField("self", related_name="rated_users", blank=True)
     watchlist=models.ManyToManyField('Listing',blank=True,related_name="watchlisted_by")
 
 class Category(models.Model):

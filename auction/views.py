@@ -351,11 +351,33 @@ def following(request):
     })
 
 def profile(request, user_id):
+    if request.method == "POST":
+        rating = request.POST.get("rating")
+        try:
+            rating = float(rating)
+            if not (1 <= rating <= 5):
+                return HttpResponse("Invalid rating. Must be between 1 and 5.")
+        except (ValueError, TypeError):
+            return HttpResponse("Invalid rating format.")
+
+        user = User.objects.get(pk=user_id)
+        curr_user = request.user
+
+        # Prevent double rating
+        if curr_user in user.noOfRatings.all():
+            return HttpResponse("You've already rated this user.")
+
+        temp = float(user.rating) * len(user.noOfRatings.all()) + rating
+        user.noOfRatings.add(curr_user)
+        user.rating = temp / (len(user.noOfRatings.all()))
+        user.save()
+
+        return HttpResponseRedirect(reverse("profile", args=(user.id,)))
+
     currUser = request.user
     user = User.objects.get(pk=user_id)
     followings = Follow.objects.filter(follower = user).values_list('followed', flat=True)
     followers = Follow.objects.filter(followed = user).values_list('follower', flat=True)
-
     posts = Post.objects.filter(owner = user).order_by('date').reverse()
 
     follows = currUser.id in followers

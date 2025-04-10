@@ -1,78 +1,158 @@
 {% extends "auction/layout.html" %}
-
+{% load static %}
 {% block body %}
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-    <div class="card shadow-lg p-4 rounded" style="width: 100%; max-width: 500px;">
-        <h2 class="mb-4 text-center">Create an Account</h2>
+<style>
+    .register-container {
+        display: flex;
+        min-height: 100vh;
+        flex-wrap: wrap;
+    }
 
-        {% if message %}
-            <div class="alert alert-danger text-center">{{ message }}</div>
-        {% endif %}
+    .register-form {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        background-color: #fff;
+    }
 
-        <form action="{% url 'register' %}" method="post">
-            {% csrf_token %}
-            
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input 
-                    type="text" 
-                    class="form-control" 
-                    id="username" 
-                    name="username" 
-                    placeholder="e.g., johndoe" 
-                    value="{{ username|default:'' }}" 
-                    required 
-                    autofocus
-                >
+    .register-image {
+        flex: 1;
+        background: linear-gradient(135deg, rgba(228, 77, 157, 0.85), rgba(105, 94, 255, 0.85)),
+                    url("{% static 'images/background.png' %}") no-repeat center center;
+        background-size: cover;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .register-image img {
+        max-height: 200px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 2rem;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control:focus {
+        border-color: #695eff;
+        box-shadow: 0 0 0 0.2rem rgba(105, 94, 255, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #695eff;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #574ee1;
+    }
+
+    .form-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    @media (max-width: 992px) {
+        .register-image {
+            display: none;
+        }
+    }
+    .register-image img {
+        max-height: 200px;
+        margin-bottom: 20px;
+        border-radius: 20px; /* adds smooth curved edges */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* optional: soft shadow for lift effect */
+    }
+</style>
+
+<div class="register-container">
+    <!-- Left: Register Form -->
+    <div class="register-form">
+        <div class="card">
+            <h2 class="mb-4 text-center">Create an Account</h2>
+
+            {% if message %}
+                <div class="alert alert-danger text-center">{{ message }}</div>
+            {% endif %}
+
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="e.g., johndoe" value="{{ username|default:'' }}" required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="{{ email|default:'' }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter a strong password" required>
+                        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password')">👁</button>
+                    </div>
+                    <div class="form-text">At least 8 characters recommended.</div>
+                </div>
+                <div class="mb-4">
+                    <label for="confirmation" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="confirmation" name="confirmation" placeholder="Re-enter your password" required>
+                        <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('confirmation')">👁</button>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                </div>
+            </form>
+            <div class="mt-4 text-center">
+                Already have an account? <a href="{% url 'login' %}">Log in here</a>.
             </div>
+        </div>
+    </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input 
-                    type="email" 
-                    class="form-control" 
-                    id="email" 
-                    name="email" 
-                    placeholder="you@example.com" 
-                    value="{{ email|default:'' }}" 
-                    required
-                >
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Enter a strong password" 
-                    required
-                >
-                <div class="form-text">At least 8 characters recommended.</div>
-            </div>
-
-            <div class="mb-4">
-                <label for="confirmation" class="form-label">Confirm Password</label>
-                <input 
-                    type="password" 
-                    class="form-control" 
-                    id="confirmation" 
-                    name="confirmation" 
-                    placeholder="Re-enter your password" 
-                    required
-                >
-            </div>
-
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary btn-lg">Register</button>
-            </div>
-        </form>
-
-        <div class="mt-4 text-center">
-            Already have an account? 
-            <a href="{% url 'login' %}">Log in here</a>.
+    <!-- Right: Promo Image Section -->
+    <div class="register-image">
+        <div>
+            <img src="{% static 'images/logo.png' %}" alt="Auction Visual" class="img-fluid">
+            <h4>Discover amazing auctions and bid smart with our dynamic platform.</h4>
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(id) {
+        const field = document.getElementById(id);
+        if (field.type === "password") {
+            field.type = "text";
+        } else {
+            field.type = "password";
+        }
+    }
+</script>
 {% endblock %}
