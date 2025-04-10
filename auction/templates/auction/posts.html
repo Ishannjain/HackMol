@@ -3,6 +3,43 @@
 {% block body %}
 
 <style>
+    .search-container {
+        display: flex;
+        justify-content: center;
+        padding: 0 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-box {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        color: #999;
+        font-size: 1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.5rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .search-input:focus {
+        border-color: #999;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    }
+
     .post-card {
         background-color: #fff;
         border-radius: 12px;
@@ -97,9 +134,7 @@
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken")
             },
-            body: JSON.stringify({
-                content: text
-            })
+            body: JSON.stringify({ content: text })
         })
         .then(response => response.json())
         .then(result => {
@@ -119,7 +154,7 @@
         if (liked === true) {
             fetch(`/unlike/${id}`)
             .then(response => response.json())
-            .then(result => {
+            .then(() => {
                 likes--;
                 counter.innerHTML = likes;
                 btn.classList.add('fa-regular');
@@ -128,7 +163,7 @@
         } else {
             fetch(`/like/${id}`)
             .then(response => response.json())
-            .then(result => {
+            .then(() => {
                 likes++;
                 counter.innerHTML = likes;
                 btn.classList.add('fa-solid');
@@ -156,11 +191,35 @@
             }
         });
     }
+
+    function filterPostsByUser() {
+        const query = document.getElementById("userSearch").value.toLowerCase();
+        const posts = document.querySelectorAll(".post-card");
+
+        posts.forEach(post => {
+            const userElement = post.querySelector(".post-header a");
+            const username = userElement ? userElement.textContent.toLowerCase() : "";
+            post.style.display = username.includes(query) ? "block" : "none";
+        });
+    }
 </script>
 
 <div class="container mt-4">
-
     <h2 class="mb-4">All Posts</h2>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fa fa-search search-icon"></i>
+            <input
+                type="text"
+                id="userSearch"
+                class="search-input"
+                placeholder="Search posts by username..."
+                onkeyup="filterPostsByUser()"
+            >
+        </div>
+    </div>
 
     {% if user.is_authenticated %}
     <div class="new-post-form">
@@ -235,7 +294,9 @@
             {% endif %}
 
             {% for num in page_obj.paginator.page_range %}
-            <li class="page-item {% if num == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            <li class="page-item {% if num == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
             {% endfor %}
 
             {% if page_obj.has_next %}
