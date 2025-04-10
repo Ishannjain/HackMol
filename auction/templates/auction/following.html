@@ -1,6 +1,39 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
+<script>
+
+    function like(id, liked) {
+        const btn = document.querySelector(`#like_${id}`);
+        const counter = document.querySelector(`#counter_${id}`);
+        let likes = parseInt(counter.innerHTML);
+        
+        btn.classList.remove('fa-solid');
+        btn.classList.remove('fa-regular');
+
+        if (liked === true) {
+            fetch(`/unlike/${id}`)
+            .then(response => response.json())
+            .then(result => {
+                likes--;
+                counter.innerHTML = likes;
+                btn.classList.add('fa-regular');
+                btn.setAttribute("onclick", `like(${id}, false)`);
+            })
+        }
+        else {
+            fetch(`/like/${id}`)
+            .then(response => response.json)
+            .then(result => {
+                likes++;
+                counter.innerHTML = likes;
+                btn.classList.add('fa-solid');
+                btn.setAttribute("onclick", `like(${id}, true)`);
+            })
+        }
+    }
+</script>
+
 <div class="container mt-4">
     <h2 class="mb-4">All Posts</h2>
 
@@ -16,13 +49,17 @@
 
             <p class="card-text">{{ post.content }}</p>
 
-            <div class="text-muted d-flex align-items-center">
-                {% if user in post.likes.all %}
-                    <i class="fa-solid fa-thumbs-up me-2 text-primary"></i>
+            <div class="mt-2">
+                {% if not user.is_authenticated %}
+                    <i class="fa-regular fa-thumbs-up me-1"></i>
                 {% else %}
-                    <i class="fa-regular fa-thumbs-up me-2"></i>
+                    {% if user in post.likes.all %}
+                        <i class="fa-solid fa-thumbs-up like-icon text-primary" id="like_{{ post.id }}" onclick="like('{{ post.id }}', true)"></i>
+                    {% else %}
+                        <i class="fa-regular fa-thumbs-up like-icon" id="like_{{ post.id }}" onclick="like('{{ post.id }}', false)"></i>
+                    {% endif %}
                 {% endif %}
-                <span>{{ post.likes.count }}</span>
+                <span id="counter_{{ post.id }}">{{ post.likes.count }}</span> likes
             </div>
         </div>
     </div>

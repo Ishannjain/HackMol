@@ -4,6 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator
+import json
+from django.http import JsonResponse
 
 
 from .models import *
@@ -236,7 +238,15 @@ def newPost(request):
         )
         post.save()
         return HttpResponseRedirect(reverse("posts"))
-    
+
+
+def edit(request, post_id):
+    if request.method == "POST":
+        post = Post.objects.get(pk = post_id)
+        body = json.loads(request.body)
+        post.content = body["content"]
+        post.save()
+        return JsonResponse({"message": "Change successful", "data": body["content"]})    
 
 def following(request):
     currUser = request.user
@@ -299,3 +309,15 @@ def unfollow(request, user_id):
    
     follow.delete()
     return HttpResponseRedirect(reverse("profile", args=(user.id,)))
+
+
+
+def like(request, post_id):
+    post = Post.objects.get(pk = post_id)
+    post.likes.add(request.user)
+    return JsonResponse({"message": "Like added!"})
+
+def unlike(request, post_id):
+    post = Post.objects.get(pk = post_id)
+    post.likes.remove(request.user)
+    return JsonResponse({"message": "Like removed!"})
