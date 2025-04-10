@@ -1,0 +1,26 @@
+{% extends "auction/layout.html" %}
+{% block body %}
+    {% if message %}
+        <div>
+            {{message}}
+        </div>
+    {% endif %}
+    <form action="{% url 'findListing' %}" method="post" class="mx-auto needs-validation" style="max-width: 700px;" novalidate>
+        {% csrf_token %}
+        
+        
+        <div class="mb-3">
+            <label for="room_id" class="form-label"><strong>Room Id</strong></label>
+            <input type="text" class="form-control" id="room_id" name="room_id">
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label"><strong>Password</strong></label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Find Listing</button>
+        </div>
+    </form>
+{% endblock %}

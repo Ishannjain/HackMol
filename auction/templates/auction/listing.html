@@ -90,7 +90,9 @@
                         <button class="btn btn-sm btn-link p-0" onclick="toggleDescription()" id="toggle-btn">Read more</button>
                     {% endif %}
                 </li>
-                               
+                {% if is_creator and listing.isPrivate %}
+                    <li class="list-group-item"><strong>Room Id:</strong> {{ listing.room_id }}</li>
+                {% endif %}       
                 <li class="list-group-item"><strong>Category:</strong> {{ listing.category }}</li>
                 <li class="list-group-item"><strong>Created by:</strong> {{ listing.owner }}</li>
                 <li class="list-group-item"><strong>Current Price:</strong> ${{ listing.current_price }}</li>
@@ -162,7 +164,7 @@
                             {{ comment.content }}
                         </div>
                         <br>
-                        <button class="btn btn-sm btn-link p-0" onclick="toggleComment({{ forloop.counter }})" id="comment-btn-{{ forloop.counter }}">Read more</button>
+                        <button class="btn btn-sm btn-link p-0" onclick="toggleComment('{{ forloop.counter }}')" id="comment-btn-{{ forloop.counter }}">Read more</button>
                     {% else %}
                         <span>{{ comment.content }}</span>
                     {% endif %}

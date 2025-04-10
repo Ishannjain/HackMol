@@ -42,11 +42,57 @@
             <div class="invalid-feedback">Please select a category.</div>
         </div>
 
+        <div class="mb-4">
+            <label for="mode" class="form-label"><strong>Mode <span class="text-danger">*</span></strong></label>
+            <select class="form-select" id="mode" name="mode" required>
+                
+                <option value="private">Private</option>
+                <option value="public" selected>Public</option>
+                
+            </select>
+        </div>
+
+        <div class="private" style="display: none;">
+            <div class="mb-3">
+                <label for="password" class="form-label"><strong>Password</strong></label>
+                <input type="password" class="form-control" id="password" name="password">
+            </div>
+        </div>
+
         <div class="d-grid">
             <button type="submit" class="btn btn-primary btn-lg">Create Listing</button>
         </div>
     </form>
 </div>
 
+<script>
+// Bootstrap form validation
+(function () {
+    'use strict'
+    const forms = document.querySelectorAll('.needs-validation')
+    Array.from(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})();
 
+    document.querySelector('#mode').addEventListener('change', function(event) {
+        const private = document.querySelector('.private');
+        if (event.target.value === 'private') {
+            private.style.display = 'block';
+            private.required = true
+            document.querySelector('#password').required = true;
+        }
+        else {
+            private.style.display = 'none';
+            document.querySelector('#password').required = false;
+
+        }
+    })
+</script>
 {% endblock %}

@@ -11,6 +11,14 @@ from django.http import JsonResponse, HttpResponseForbidden
 from .models import *
 
 import datetime
+import random, string
+def generate_unique_code():
+    from .models import Listing
+    while True:
+        code = ''.join(random.choices(string.digits, k=6))
+        if not Listing.objects.filter(room_id=code).exists():
+            return code
+
 
 def index(request):
     
@@ -79,25 +87,75 @@ def create_listing(request):
         description=request.POST.get("description")
         starting_bid=request.POST.get("starting_bid")
         imageUrl=request.POST.get("imageUrl")
+        mode = request.POST.get('mode')
 
 
         cat_id=request.POST.get("category")
         category = Category.objects.filter(pk = cat_id).first()
 
-        listing=Listing(
-            title=title,
-            description=description,
-            starting_bid=starting_bid,
-            imageUrl=imageUrl,
-            category=category,
-            owner=request.user
-        )
-        listing.save()
-        return HttpResponseRedirect(reverse(index))
+        if mode == "private" :
+            listing=Listing(
+                title=title,
+                description=description,
+                starting_bid=starting_bid,
+                imageUrl=imageUrl,
+                category=category,
+                owner=request.user,
+                isPrivate = True,
+                room_id = generate_unique_code(),
+                password = request.POST.get('password')
+            )
+            listing.save()
+            return HttpResponseRedirect(reverse(index))
+
+        else :
+            listing=Listing(
+                title=title,
+                description=description,
+                starting_bid=starting_bid,
+                imageUrl=imageUrl,
+                category=category,
+                owner=request.user,
+                isPrivate = False
+            )
+            listing.save()
+            return HttpResponseRedirect(reverse(index))
+
+        
+
     
     return render(request,"auction/create.html", {
         "categories": Category.objects.all()
     })
+
+def findListing(request):
+    if request.method == "POST":
+        room = request.POST.get("room_id")
+        password = request.POST.get("password")
+        listing = Listing.objects.filter(isPrivate = True, room_id = room, password = password).first()
+        if listing:
+            user = request.user
+            in_watchlist=user.is_authenticated and listing in user.watchlist.all()
+            highest_bid=listing.bids.order_by("-amount").first()
+            is_creator=listing.owner == user
+            winner=highest_bid.user if highest_bid else None
+            is_winner=winner==user
+            comments=listing.comments.all().order_by("-created_at")
+            return render(request,"auction/listing.html",{
+            "listing":listing,
+            "in_watchlist":in_watchlist,
+            "highest_bid":highest_bid,
+            "is_creator":is_creator,
+            "winner":winner if not listing.isActive else None,
+            "is_winner":is_winner,
+            "comments":comments
+            })
+        else:
+            return render(request, "auction/findRoom.html", {
+                "message": "Id or password is incorrect"
+            })
+    return render(request, "auction/findRoom.html")
+
 
 def listing(request,listing_id):
     listing=get_object_or_404(Listing,pk=listing_id)
@@ -192,7 +250,7 @@ def category(request,category_name):
             listing_of_this_category.append(listing)
 
     category = Category.objects.filter(title = category_name).first()
-    listings = Listing.objects.filter(category = category)
+    listings = Listing.objects.filter(category = category, isPrivate = False)
 
     return render(request,"auction/category.html",{
         "listings":listings,
@@ -203,7 +261,10 @@ def category(request,category_name):
 def user_listing(request, user_id):
     user = User.objects.get(pk = user_id)
     print(user)
-    listings = Listing.objects.filter(owner = user)
+    if user == request.user:
+        listings = Listing.objects.filter(owner = user)
+    else:
+        listings = Listing.objects.filter(owner = user, isPrivate = False)
     
     return render(request,"auction/category.html",{
         "listings":listings,
