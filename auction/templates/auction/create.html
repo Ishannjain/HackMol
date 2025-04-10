@@ -1,6 +1,37 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
+<style>
+    .form-select {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 25px;
+        background-color: #fff;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        appearance: none; 
+    }
+
+    .form-select:focus {
+        border-color: #4B9CD3; 
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(75, 156, 211, 0.2);
+    }
+
+    .form-label {
+        margin-bottom: 8px;
+        display: block;
+        font-weight: 600;
+        color: #2e2e2e;
+    }
+
+    .is-invalid + .invalid-feedback {
+        display: block;
+    }
+
+</style>
 <div class="container my-5">
     <h2 class="text-center mb-4 fw-semibold text-dark">Create a New Auction Listing</h2>
 
