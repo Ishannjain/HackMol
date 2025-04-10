@@ -1,7 +1,41 @@
 {% extends "auction/layout.html" %}
 {% block body %}
 
-    
+<style>
+    .category-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 0 1rem;
+    }
+
+    .category-card {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        text-align: center;
+        border-radius: 12px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, background-color 0.3s ease;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        background-color: #e0e0e0;
+    }
+
+    .no-categories {
+        text-align: center;
+        color: #999;
+        font-size: 1.1rem;
+        margin-top: 2rem;
+    }
+</style>
+
 <div class="category-container">
     {% for category in all_categories %}
         <a href="{% url 'category' category %}" class="category-card" onclick="notifyCategoryClick('{{ category }}')">
@@ -19,4 +53,5 @@
         // alert("You selected: " + categoryName);
     }
 </script>
+
 {% endblock %}
