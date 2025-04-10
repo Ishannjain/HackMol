@@ -3,9 +3,12 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 
 from .models import *
+
+import datetime
 
 def index(request):
     
@@ -206,3 +209,30 @@ def user_listing(request, user_id):
     })
 
 
+
+
+
+def posts(request):
+    allPosts = Post.objects.all().order_by("date").reverse()
+    paginator = Paginator(allPosts, 10)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    
+    return render(request, "auction/posts.html", {
+        "posts": allPosts,
+        "user": request.user,
+        "page_obj": page
+    })
+
+
+def newPost(request):
+    if request.method == "POST":
+        content = request.POST["content"]
+        current_time = datetime.datetime.now().replace(microsecond=0)
+        post = Post (
+            content = content,
+            owner = request.user,
+            date = current_time
+        )
+        post.save()
+        return HttpResponseRedirect(reverse("posts"))

@@ -43,3 +43,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"comment by {self.user.username} on {self.listing}"
+    
+
+class Post(models.Model):
+    owner = models.ForeignKey(User, related_name="posts", on_delete=models.CASCADE)
+    likes = models.ManyToManyField(User, related_name="liked_posts", blank=True)
+    content = models.TextField(max_length=300)
+    date = models.DateTimeField()
