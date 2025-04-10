@@ -7,8 +7,8 @@
     <div class="card p-3 shadow-sm mb-4">
         <h3 class="mb-0">{{ loadedUser.username }}</h3>
         <small class="text-muted d-flex align-items-center gap-3 mt-2">
-            <span> 👥 Followers: {{ follower.count }} | </span>
-            <span> ➡️ Following: {{ following.count }} | </span>
+            <span> Followers: {{ follower.count }} | </span>
+            <span> Following: {{ following.count }} | </span>
             <a href="{% url 'user_listings' loadedUser.id %}" class="text-primary text-decoration-none">
                 <div> Listings</div>
             </a>
@@ -35,6 +35,7 @@
                         <small class="text-muted">{{ post.date }}</small>
                     </div>
                     {% if user == post.owner %}
+                        <button class="btn btn-outline-danger btn-sm ms-2" onclick="deletePost('{{ post.id }}')">Delete</button>
                         <button class="btn btn-sm btn-outline-success" onclick="edit('{{ post.id }}', `{{ post.content|escapejs }}`)">Edit</button>
                     {% endif %}
                 </div>
@@ -157,6 +158,26 @@
             counter.innerText = likes;
             btn.classList.add(liked ? 'fa-regular' : 'fa-solid', 'fa-thumbs-up');
             btn.setAttribute("onclick", `like('${id}', ${!liked})`);
+        });
+    }
+
+    function deletePost(id) {
+        if (!confirm("Are you sure you want to delete this post?")) {
+            return;
+        }
+
+        fetch(`/delete/${id}`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                document.querySelector(`#post_${id}`).parentElement.remove();
+            } else {
+                alert("Failed to delete the post.");
+            }
         });
     }
 </script>

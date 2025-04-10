@@ -5,7 +5,7 @@ from django.shortcuts import render,get_object_or_404
 from django.urls import reverse
 from django.core.paginator import Paginator
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 
 
 from .models import *
@@ -321,3 +321,16 @@ def unlike(request, post_id):
     post = Post.objects.get(pk = post_id)
     post.likes.remove(request.user)
     return JsonResponse({"message": "Like removed!"})
+
+
+def delete_post(request, post_id):
+    if request.method == "DELETE":
+        try:
+            post = Post.objects.get(pk=post_id)
+            if post.owner != request.user:
+                return HttpResponseForbidden("You cannot delete someone else's post.")
+            post.delete()
+            return JsonResponse({"message": "Post deleted successfully."})
+        except Post.DoesNotExist:
+            return JsonResponse({"error": "Post not found."}, status=404)
+    return JsonResponse({"error": "Invalid request method."}, status=400)
