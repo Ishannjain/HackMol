@@ -1,89 +1,143 @@
 {% extends "auction/layout.html" %}
-
 {% block body %}
 <style>
+    .form-container {
+        max-width: 700px;
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control,
     .form-select {
-        width: 100%;
-        padding: 10px 15px;
-        font-size: 16px;
-        border: 2px solid #ccc;
-        border-radius: 25px;
-        background-color: #fff;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        appearance: none; 
+        transition: all 0.3s ease;
+        box-shadow: none;
     }
 
+    .form-control:focus,
     .form-select:focus {
-        border-color: #4B9CD3; 
-        outline: none;
-        box-shadow: 0 0 0 4px rgba(75, 156, 211, 0.2);
+        border-color: #695eff;
+        box-shadow: 0 0 0 0.2rem rgba(105, 94, 255, 0.2);
     }
 
-    .form-label {
-        margin-bottom: 8px;
-        display: block;
-        font-weight: 600;
-        color: #2e2e2e;
+    .btn-primary {
+        background-color: #695eff;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    .is-invalid + .invalid-feedback {
-        display: block;
+    .btn-primary:hover {
+        background-color: #574ee1;
+        transform: translateY(-2px);
     }
 
+    .private {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: all 0.4s ease;
+    }
+
+    .private.show {
+        max-height: 200px;
+        opacity: 1;
+        margin-bottom: 1rem;
+    }
+
+    #charCount {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-align: right;
+    }
+
+    .image-preview {
+        display: none;
+        margin-top: 15px;
+        max-height: 200px;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .progress {
+        height: 6px;
+        background-color: #e9ecef;
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        background-color: #695eff;
+        transition: width 0.3s ease;
+    }
 </style>
+
 <div class="container my-5">
     <h2 class="text-center mb-4 fw-semibold text-dark">Create a New Auction Listing</h2>
 
-    <form action="{% url 'create' %}" method="post" class="mx-auto needs-validation" style="max-width: 700px;" novalidate>
+    <div class="progress">
+        <div class="progress-bar" id="formProgress" style="width: 0%;"></div>
+    </div>
+
+    <form action="{% url 'create' %}" method="post" class="mx-auto needs-validation form-container" novalidate>
         {% csrf_token %}
 
         <div class="mb-3">
             <label for="title" class="form-label"><strong>Title <span class="text-danger">*</span></strong></label>
-            <input type="text" class="form-control" id="title" name="title" required>
+            <input type="text" class="form-control track" id="title" name="title" required>
             <div class="invalid-feedback">Please enter a title.</div>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label"><strong>Description <span class="text-danger">*</span></strong></label>
-            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+            <textarea class="form-control track" id="description" name="description" rows="4" required></textarea>
+            <div id="charCount">0 / 500</div>
             <div class="invalid-feedback">Please enter a description.</div>
         </div>
 
         <div class="mb-3">
             <label for="starting_bid" class="form-label"><strong>Starting Bid (Rs.) <span class="text-danger">*</span></strong></label>
-            <input type="number" class="form-control" id="starting_bid" name="starting_bid" step="0.01" min="0" required>
+            <input type="number" class="form-control track" id="starting_bid" name="starting_bid" step="0.01" min="0" required>
             <div class="invalid-feedback">Please enter a starting bid.</div>
         </div>
 
         <div class="mb-3">
             <label for="imageUrl" class="form-label"><strong>Image URL <span class="text-danger">*</span></strong></label>
-            <input type="url" class="form-control" id="imageUrl" name="imageUrl" required>
+            <input type="url" class="form-control track" id="imageUrl" name="imageUrl" required>
             <div class="invalid-feedback">Please provide a valid image URL.</div>
+            <img id="previewImage" class="image-preview" alt="Image Preview">
         </div>
 
-        <div class="mb-4">
+        <div class="mb-3">
             <label for="category" class="form-label"><strong>Category <span class="text-danger">*</span></strong></label>
-            <select class="form-select" id="category" name="category" required>
-                <option value="" disabled selected>Select a category</option>
+            <input list="categoryOptions" class="form-control track" id="category" name="category" required>
+            <datalist id="categoryOptions">
                 {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.title }}</option>
+                    <option value="{{ category.title }}">
                 {% endfor %}
-            </select>
+            </datalist>
             <div class="invalid-feedback">Please select a category.</div>
         </div>
-
-        <div class="mb-4">
+        
+        <div class="mb-3">
             <label for="mode" class="form-label"><strong>Mode <span class="text-danger">*</span></strong></label>
-            <select class="form-select" id="mode" name="mode" required>
-                
-                <option value="private">Private</option>
-                <option value="public" selected>Public</option>
-                
-            </select>
+            <input list="modeOptions" class="form-control track" id="mode" name="mode" value="public" required>
+            <datalist id="modeOptions">
+                <option value="public">
+                <option value="private">
+            </datalist>
         </div>
+        
 
-        <div class="private" style="display: none;">
+        <div class="private" id="privateFields">
             <div class="mb-3">
                 <label for="password" class="form-label"><strong>Password</strong></label>
                 <input type="password" class="form-control" id="password" name="password">
@@ -97,33 +151,81 @@
 </div>
 
 <script>
-// Bootstrap form validation
-(function () {
-    'use strict'
-    const forms = document.querySelectorAll('.needs-validation')
-    Array.from(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
-            form.classList.add('was-validated')
-        }, false)
-    })
-})();
+    // Form validation
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
 
-    document.querySelector('#mode').addEventListener('change', function(event) {
-        const private = document.querySelector('.private');
-        if (event.target.value === 'private') {
-            private.style.display = 'block';
-            private.required = true
-            document.querySelector('#password').required = true;
+    // Private fields show/hide
+    const modeSelect = document.getElementById('mode');
+    const privateSection = document.getElementById('privateFields');
+    const passwordInput = document.getElementById('password');
+    modeSelect.addEventListener('change', function () {
+        if (this.value === 'private') {
+            privateSection.classList.add('show');
+            passwordInput.required = true;
+        } else {
+            privateSection.classList.remove('show');
+            passwordInput.required = false;
         }
-        else {
-            private.style.display = 'none';
-            document.querySelector('#password').required = false;
+    });
 
+    // Character count for description
+    const description = document.getElementById('description');
+    const charCount = document.getElementById('charCount');
+    description.addEventListener('input', () => {
+        const len = description.value.length;
+        charCount.textContent = `${len} / 500`;
+        if (len > 500) {
+            description.value = description.value.slice(0, 500);
         }
-    })
+    });
+
+    // Image preview
+    const imageUrl = document.getElementById('imageUrl');
+    const previewImage = document.getElementById('previewImage');
+    imageUrl.addEventListener('input', () => {
+        const url = imageUrl.value;
+        if (url.match(/\.(jpeg|jpg|gif|png|webp|svg)$/)) {
+            previewImage.src = url;
+            previewImage.style.display = 'block';
+        } else {
+            previewImage.style.display = 'none';
+        }
+    });
+
+    // Progress bar tracking
+    const fields = document.querySelectorAll('.track');
+    const progress = document.getElementById('formProgress');
+    function updateProgress() {
+        let filled = 0;
+        fields.forEach(field => {
+            if (field.value.trim() !== '') filled++;
+        });
+        const percent = (filled / fields.length) * 100;
+        progress.style.width = `${percent}%`;
+    }
+    fields.forEach(field => {
+        field.addEventListener('input', updateProgress);
+    });
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        if (modeSelect.value === 'private') {
+            privateSection.classList.add('show');
+            passwordInput.required = true;
+        }
+        updateProgress();
+    });
 </script>
 {% endblock %}
