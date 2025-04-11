@@ -1,16 +1,60 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
-<div class="container mt-4">
-    <h3 class="mb-4">Set Your Preferences</h3>
-    <form method="post" class="border p-4 rounded shadow-sm" style="max-width: 600px;">
+<!-- GSAP CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+    .preference-form {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(5px);
+        border-radius: 1rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+    .form-check {
+        transition: transform 0.2s ease;
+        cursor: pointer;
+    }
+
+    .form-check:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.2);
+        border-color: #0d6efd;
+    }
+</style>
+
+<div class="container mt-5">
+    <h3 class="text-center mb-4" id="heading">Set Your Preferences</h3>
+    <form method="post" id="preferencesForm" class="preference-form mx-auto p-5 shadow" style="max-width: 700px;">
         {% csrf_token %}
 
         <!-- Categories -->
-        <div class="mb-3">
+        <div class="mb-4">
             <label class="form-label"><strong>Select Preferred Categories:</strong></label><br>
             {% for category in categories %}
-                <div class="form-check form-check-inline">
+                <div class="form-check form-check-inline category-check">
                     <input 
                         class="form-check-input"
                         type="checkbox"
@@ -29,18 +73,48 @@
         </div>
 
         <!-- Min Price -->
-        <div class="mb-3">
+        <div class="mb-4">
             <label for="min_price" class="form-label"><strong>Minimum Price:</strong></label>
             <input type="number" step="0.01" class="form-control" name="min_price" id="min_price" value="{{ min_price }}">
         </div>
 
         <!-- Max Price -->
-        <div class="mb-3">
+        <div class="mb-4">
             <label for="max_price" class="form-label"><strong>Maximum Price:</strong></label>
             <input type="number" step="0.01" class="form-control" name="max_price" id="max_price" value="{{ max_price }}">
         </div>
 
-        <button type="submit" class="btn btn-success">Save Preferences</button>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">💾 Save Preferences</button>
+        </div>
     </form>
 </div>
+
+<!-- JavaScript Animations -->
+<script>
+    // Animate page load
+    gsap.from("#heading", { duration: 1, y: -50, opacity: 0, ease: "power2.out" });
+    gsap.from(".preference-form", { duration: 1, scale: 0.95, opacity: 0, delay: 0.2 });
+
+    // Animate category checkboxes on hover/click
+    document.querySelectorAll('.form-check-input').forEach(input => {
+        input.addEventListener('change', () => {
+            gsap.fromTo(input, 
+                { scale: 0.8 }, 
+                { scale: 1, duration: 0.2, ease: "bounce.out" }
+            );
+        });
+    });
+
+    // Form submission animation
+    document.getElementById("preferencesForm").addEventListener("submit", function(e) {
+        gsap.to("#preferencesForm", {
+            duration: 0.6,
+            scale: 0.95,
+            opacity: 0.7,
+            ease: "power1.inOut"
+        });
+    });
+</script>
 {% endblock %}
+

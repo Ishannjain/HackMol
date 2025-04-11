@@ -1,12 +1,74 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
+<!-- 💫 Custom Styling -->
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translate3d(0, 30px, 0);
+        }
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease forwards;
+        opacity: 0; /* For smoother entry */
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 1rem;
+        border: none;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body {
+        transition: background-color 0.3s ease;
+    }
+
+    .card:hover .card-body {
+        background-color: #f8f9fa;
+    }
+
+    .card-title {
+        transition: color 0.3s ease;
+    }
+
+    .card:hover .card-title {
+        color: #007bff;
+    }
+
+    .btn-outline-primary {
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        color: #fff;
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .fade-header {
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+    }
+</style>
+
+<!-- 📦 Listings Section -->
 <div class="container mt-4">
-    <h3 class="mb-4">Listings Based on Your Preferences</h3>
+    <h3 class="mb-4 fade-header">🎯 Listings Based on Your Preferences</h3>
 
     {% if listings %}
         {% for listing in listings %}
-            <div class="card mb-3 shadow-sm">
+            <div class="card mb-3 shadow-sm fade-in-up" style="animation-delay: {{ forloop.counter0|add:"0.2"|floatformat:1 }}s;">
                 <div class="card-body">
                     <h5 class="card-title">{{ listing.title }}</h5>
                     <p class="card-text">{{ listing.description }}</p>
@@ -20,4 +82,12 @@
         <p class="text-muted">No listings match your preferences at the moment.</p>
     {% endif %}
 </div>
+
+<!-- 🌟 JS to Fade Header -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const header = document.querySelector(".fade-header");
+        header.style.opacity = 1;
+    });
+</script>
 {% endblock %}
