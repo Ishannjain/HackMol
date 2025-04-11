@@ -71,6 +71,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+
     .comment-preview {
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -80,19 +81,19 @@
         max-height: 3.6em;
         opacity: 1;
     }
-    
+
     .comment-full {
         transition: max-height 0.5s ease, opacity 0.5s ease;
         max-height: 0;
         overflow: hidden;
         opacity: 0;
     }
-    
+
     .comment-full.show {
         max-height: 300px;
         opacity: 1;
     }
-    
+
     .arrow-toggle {
         cursor: pointer;
         font-size: 0.9rem;
@@ -100,11 +101,19 @@
         transition: transform 0.3s ease;
         display: inline-block;
     }
-    
+
     .arrow-toggle.rotated {
         transform: rotate(180deg);
     }
-    
+
+    /* SCROLLABLE COMMENTS */
+    .comments-scroll {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+    }
 </style>
 
 <!-- Background -->
@@ -141,7 +150,7 @@
                 {% endif %}
                 <li class="list-group-item"><strong>Category:</strong> {{ listing.category }}</li>
                 <li class="list-group-item"><strong>Created by:</strong> {{ listing.owner }}</li>
-                <li class="list-group-item"><strong>Current Price:</strong> ${{ listing.current_price }}</li>
+                <li class="list-group-item"><strong>Current Price:</strong> Rs. {{ listing.current_price }}</li>
                 {% if highest_bid %}
                     <li class="list-group-item text-success"><strong>Highest Bidder:</strong> {{ highest_bid.user }}</li>
                 {% endif %}
@@ -185,65 +194,70 @@
                 <div class="alert alert-success text-center">🎉 You won the Auction!</div>
             {% endif %}
         </div>
+
+        <!-- Right Column -->
         <div class="col-lg-7">
             <h4 class="section-title mb-3">Comments</h4>
-        
+
             {% if user.is_authenticated %}
-                <form action="{% url 'listing' listing.id %}" method="post" class="mb-4">
+                <form action="{% url 'listing' listing.id %}" method="post" class="mb-3">
                     {% csrf_token %}
                     <textarea name="comment" class="form-control mb-2" rows="3" placeholder="Write a comment..." required></textarea>
                     <button name="comment_submit" class="btn btn-success">Add Comment</button>
                 </form>
             {% endif %}
-        
-            <ul class="list-group">
-                {% for comment in comments %}
-                <li class="list-group-item">
-                    <strong>{{ comment.user }}</strong><br>
-                    {% if comment.content|length > 100 %}
-                        <div class="comment-container">
-                            <div class="comment-preview" id="comment-preview-{{ forloop.counter }}">
-                                {{ comment.content }}
-                            </div>
-                            <div class="comment-full d-none" id="comment-full-{{ forloop.counter }}">
-                                {{ comment.content }}
-                            </div>
-                            <div class="text-end mt-1">
-                                <span class="arrow-toggle" onclick="toggleComment('{{ forloop.counter }}')" id="arrow-{{ forloop.counter }}">▼</span>
-                            </div>
-                        </div>
-                    {% else %}
-                        <span>{{ comment.content }}</span>
-                    {% endif %}
-                </li>
-                {% empty %}
-                <li class="list-group-item">No comments yet.</li>
-                {% endfor %}
-            </ul>
-            {% if listing_in_range %}
-            <div class="row">
-                <h3>Suggestions</h3>
-                {% for listing in listing_in_range %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 d-flex flex-column">
-                            {% if listing.imageUrl %}
-                                <img src="{{ listing.imageUrl }}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ listing.title }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ listing.title }}</h5>
-                                <p class="card-text">{{ listing.description }}</p>
-                                <p><strong>Price(rs.): </strong>{{ listing.current_price }}</p>
-                                <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="alert alert-info">No listings near 10% margin range</div>
-        {% endif %}
-        </div>
 
+            <!-- Scrollable Comment Section -->
+            <div class="comments-scroll mb-4">
+                <ul class="list-group">
+                    {% for comment in comments %}
+                        <li class="list-group-item">
+                            <strong>{{ comment.user }}</strong><br>
+                            {% if comment.content|length > 100 %}
+                                <div class="comment-container">
+                                    <div class="comment-preview" id="comment-preview-{{ forloop.counter }}">
+                                        {{ comment.content }}
+                                    </div>
+                                    <div class="comment-full d-none" id="comment-full-{{ forloop.counter }}">
+                                        {{ comment.content }}
+                                    </div>
+                                    <div class="text-end mt-1">
+                                        <span class="arrow-toggle" onclick="toggleComment('{{ forloop.counter }}')" id="arrow-{{ forloop.counter }}">▼</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <span>{{ comment.content }}</span>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No comments yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if listing_in_range %}
+                <div class="row">
+                    <h3>Suggestions</h3>
+                    {% for listing in listing_in_range %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 d-flex flex-column">
+                                {% if listing.imageUrl %}
+                                    <img src="{{ listing.imageUrl }}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ listing.title }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ listing.title }}</h5>
+                                    <p class="card-text">{{ listing.description }}</p>
+                                    <p><strong>Price(rs.): </strong>{{ listing.current_price }}</p>
+                                    <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No listings near 10% margin range</div>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -281,9 +295,9 @@
         const preview = document.getElementById(`comment-preview-${id}`);
         const full = document.getElementById(`comment-full-${id}`);
         const arrow = document.getElementById(`arrow-${id}`);
-    
+
         const isOpen = full.classList.contains("show");
-    
+
         if (isOpen) {
             full.classList.remove("show");
             setTimeout(() => {

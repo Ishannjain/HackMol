@@ -1,32 +1,113 @@
 {% extends "auction/layout.html" %}
 
 {% block body %}
+<style>
+    body {
+        background: #f8fbff;
+    }
+
+    .chat-card {
+        animation: fadeSlideIn 0.7s ease;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 4rem;
+    }
+
+    @keyframes fadeSlideIn {
+        0% {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card-title {
+        font-weight: bold;
+        font-size: 1.5remrem;
+        color: #162e64;
+    }
+
+    label {
+        font-weight: 600;
+        color: #343a40;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        padding: 0.6rem 1rem;
+        border: 1px solid #ced4da;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-primary {
+        background-color: #fdb813;
+        border: none;
+        font-weight: 600;
+        font-size: 1 rem;
+        padding: 0.6rem 2rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        color: #212529;
+    }
+
+    .btn-primary:hover {
+        background-color: #ffca2c;
+        color: #000;
+        box-shadow: 0 0 0 0.2rem rgba(253, 184, 19, 0.4);
+    }
+
+    select.form-control {
+        font-size: 16px;
+        padding: 12px 16px;
+        height: auto;
+        line-height: 1.5;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        appearance: none;
+        background-color: white;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='12'%20height='8'%3E%3Cpath%20fill='gray'%20d='M6%208L0%200h12z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 12px 8px;
+    }
+</style>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Start a New Chat</h2>
-                    
-                    <form method="POST" action="{% url 'new_chat' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="recipient">Select User to Chat With:</label>
-                            <select class="form-control" id="recipient" name="recipient" required>
-                                <option value="">Choose a user...</option>
-                                {% for user in users %}
+            <div class="chat-card">
+                <h2 class="card-title text-center mb-4">Start a New Chat</h2>
+
+                <form method="POST" action="{% url 'new_chat' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="recipient">Select User to Chat With:</label>
+                        <select class="form-control" id="recipient" name="recipient" required>
+                            <option value="" disabled selected hidden>Choose a user...</option>
+                            {% for user in users %}
                                 <option value="{{ user.id }}">{{ user.username }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary">Start Chat</button>
-                        </div>
-                    </form>
-                </div>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Start Chat</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

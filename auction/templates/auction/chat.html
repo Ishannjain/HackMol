@@ -45,7 +45,7 @@
 <div class="container mt-4">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Chat with {{ other_user.username }}</h5>
+            <a href="{% url 'profile' other_user.id %}"><h5 class="mb-0">Chat with {{ other_user.username }}</h5></a>
             <a href="{% url 'chat_list' %}" class="btn btn-outline-secondary btn-sm">Back to Chats</a>
         </div>
         <div class="chat-container">
