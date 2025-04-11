@@ -39,9 +39,20 @@ def generate_unique_code():
 
 
 def index(request):
+    # Get all public listings and private listings owned by the current user
+    if request.user.is_authenticated:
+        listings = Listing.objects.filter(
+            isPrivate = False
+        ) | Listing.objects.filter(
+            isPrivate = True,
+            owner = request.user
+        )
+    else:
+        listings = Listing.objects.filter(isPrivate = False)
     
     return render(request,"auction/index.html",{
-        "all_categories":Category.objects.all()
+        "all_categories":Category.objects.all(),
+        "listings": listings
     })
 
 
@@ -269,7 +280,15 @@ def watchlist(request,user_id):
 
 def category(request,category_name):
     category = Category.objects.filter(title = category_name).first()
-    listings = Listing.objects.filter(category = category, isPrivate = False)
+    # Get all public listings and private listings owned by the current user
+    listings = Listing.objects.filter(
+        category = category,
+        isPrivate = False
+    ) | Listing.objects.filter(
+        category = category,
+        isPrivate = True,
+        owner = request.user
+    )
 
     # Get price range parameters from request
     min_price = request.GET.get('min_price')

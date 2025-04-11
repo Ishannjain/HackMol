@@ -48,7 +48,7 @@
     }
 
     .private.show {
-        max-height: 200px;
+        max-height: 500px;
         opacity: 1;
         margin-bottom: 1rem;
     }
@@ -77,6 +77,18 @@
     .progress-bar {
         background-color: #695eff;
         transition: width 0.3s ease;
+    }
+
+    .private-info {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .private-info i {
+        color: #695eff;
+        margin-right: 8px;
     }
 
     select.form-control.track {
@@ -150,16 +162,20 @@
         <div class="mb-3">
             <label for="mode" class="form-label"><strong>Mode <span class="text-danger">*</span></strong></label>
             <select class="form-control track" id="mode" name="mode" required>
-                <option value="private">Private</option>
                 <option value="public" selected>Public</option>
+                <option value="private">Private</option>
             </select>
         </div>
-        
 
         <div class="private" id="privateFields">
+            <div class="private-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Private auctions are only visible to users who have the password. Share the password with specific users to allow them to participate.</span>
+            </div>
             <div class="mb-3">
-                <label for="password" class="form-label"><strong>Password</strong></label>
-                <input type="password" class="form-control" id="password" name="password">
+                <label for="password" class="form-label"><strong>Password <span class="text-danger">*</span></strong></label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password for the private auction">
+                <small class="text-muted">This password will be required to view and bid on the auction.</small>
             </div>
         </div>
 
@@ -189,6 +205,7 @@
     const modeSelect = document.getElementById('mode');
     const privateSection = document.getElementById('privateFields');
     const passwordInput = document.getElementById('password');
+    
     modeSelect.addEventListener('change', function () {
         if (this.value === 'private') {
             privateSection.classList.add('show');
@@ -202,12 +219,9 @@
     // Character count for description
     const description = document.getElementById('description');
     const charCount = document.getElementById('charCount');
-    description.addEventListener('input', () => {
-        const len = description.value.length;
-        charCount.textContent = `${len} / 500`;
-        if (len > 500) {
-            description.value = description.value.slice(0, 500);
-        }
+    description.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCount.textContent = `${currentLength} / 500`;
     });
 
     // Image preview
@@ -247,4 +261,5 @@
         updateProgress();
     });
 </script>
+
 {% endblock %}

@@ -52,29 +52,28 @@
 
     .category-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 1.5rem;
-        padding: 2rem 1rem;
-        animation: fadeIn 0.6s ease;
+        padding: 2rem;
     }
 
     .category-card {
-        background-color: #f5f5f5;
-        padding: 1rem;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         text-align: center;
-        border-radius: 14px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
         text-decoration: none;
         color: #333;
         font-weight: 600;
-        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease-out;
     }
 
     .category-card:hover {
-        transform: translateY(-6px) scale(1.03);
-        background-color: #e9e9e9;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        color: #695eff;
     }
 
     .no-categories {
@@ -82,6 +81,60 @@
         color: #999;
         font-size: 1.1rem;
         margin-top: 2rem;
+    }
+
+    .listing-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .listing-image {
+        height: 200px;
+        object-fit: contain;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .listing-body {
+        padding: 1.5rem;
+    }
+
+    .listing-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1a237e;
+    }
+
+    .listing-price {
+        font-size: 1.2rem;
+        color: #0d6efd;
+        font-weight: 600;
+    }
+
+    .listing-description {
+        color: #666;
+        margin: 1rem 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .private-badge {
+        background-color: #695eff;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
     }
 
     @keyframes fadeIn {
@@ -119,6 +172,35 @@
         <p class="no-categories">No available categories</p>
     {% endfor %}
 </div>
+
+<!-- Recent Listings -->
+{% if listings %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Recent Listings</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for listing in listings %}
+                <div class="col">
+                    <div class="listing-card">
+                        {% if listing.imageUrl %}
+                            <img src="{{ listing.imageUrl }}" class="listing-image w-100" alt="{{ listing.title }}">
+                        {% endif %}
+                        <div class="listing-body">
+                            <h5 class="listing-title">
+                                {{ listing.title }}
+                                {% if listing.isPrivate %}
+                                    <span class="private-badge">Private</span>
+                                {% endif %}
+                            </h5>
+                            <div class="listing-price">₹{{ listing.starting_bid }}</div>
+                            <p class="listing-description">{{ listing.description }}</p>
+                            <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
 
 <!-- JavaScript Filter Function -->
 <script>
