@@ -220,6 +220,28 @@
                 <li class="list-group-item">No comments yet.</li>
                 {% endfor %}
             </ul>
+            {% if listing_in_range %}
+            <div class="row">
+                <h3>Suggestions</h3>
+                {% for listing in listing_in_range %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 d-flex flex-column">
+                            {% if listing.imageUrl %}
+                                <img src="{{ listing.imageUrl }}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ listing.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ listing.title }}</h5>
+                                <p class="card-text">{{ listing.description }}</p>
+                                <p><strong>Price(rs.): </strong>{{ listing.current_price }}</p>
+                                <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">No listings near 10% margin range</div>
+        {% endif %}
         </div>
 
     </div>
