@@ -7,7 +7,7 @@
     {% if all_listings %}
     <div class="row g-4">
         {% for listing in all_listings %}
-        <div class="col-sm-6 col-lg-4">
+        <div class="col-sm-6 col-lg-4 my-2">
             <div class="card shadow-sm h-100 border-0 rounded-4">
                 {% if listing.imageUrl %}
                 <img src="{{ listing.imageUrl }}" class="card-img-top rounded-top-4" style="height: 200px; object-fit: cover;" alt="{{ listing.title }}">
@@ -26,7 +26,7 @@
     </div>
     {% else %}
     <div class="text-center mt-5">
-        <h4 class="text-muted">Your watchlist is empty 🕵️</h4>
+        <h4 class="text-muted">Your watchlist is empty</h4>
         <p class="text-secondary">Start exploring and add items you're interested in!</p>
         <a href="{% url 'index' %}" class="btn btn-primary mt-2">Browse Listings</a>
     </div>

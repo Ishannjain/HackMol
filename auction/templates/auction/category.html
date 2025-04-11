@@ -1,5 +1,26 @@
 {% extends "auction/layout.html" %}
 {% block body %}
+<style>
+    .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+</style>
+
+
 <h1>{{ category_name }}</h1>
 
 <div class="price-filter mb-4">
@@ -22,7 +43,7 @@
     <div class="row">
         {% for listing in listings %}
             <div class="col-md-4 mb-4">
-                <div class="card">
+                <div class="card h-100 d-flex flex-column">
                     {% if listing.imageUrl %}
                         <img src="{{ listing.imageUrl }}" class="card-img-top" style="height: 200px; object-fit: contain;" alt="{{ listing.title }}">
                     {% endif %}

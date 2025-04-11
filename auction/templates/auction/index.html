@@ -179,7 +179,7 @@
         <h2 class="mb-4">Recent Listings</h2>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for listing in listings %}
-                <div class="col">
+                <div class="col my-2">
                     <div class="listing-card">
                         {% if listing.imageUrl %}
                             <img src="{{ listing.imageUrl }}" class="listing-image w-100" alt="{{ listing.title }}">
