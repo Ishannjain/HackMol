@@ -112,7 +112,7 @@ Ensures password strength: 8+ characters, uppercase, lowercase, digit.
 Unique Code Generator
 Creates a secure 6-digit numeric code for private room access.
 
-6. 📄 Templates & Requirements
+6.📄 Templates & Requirements
 Templates Used
 login.html, register.html, index.html, listing.html, create.html
 
