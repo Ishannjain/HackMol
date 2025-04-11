@@ -119,8 +119,10 @@ login.html, register.html, index.html, listing.html, create.html
 findRoom.html, watchlist.html, category.html, posts.html
 
 profile.html, chat.html, chat_list.html, new_chat.html
+#TechStack Used
+Frontend: React.js, Bootstrap CSS for responsive UI
+Backend: Python Django server-side logic
+Database: SQL for data storage
+Real-time Communication: Live bidding and interaction
 
-Requirements
-Django Python
 
-Bootstrap (optional, for styling)
