@@ -9,60 +9,59 @@ Traditional auction platforms often suffer from:
 # Isolated Experiences: Auctions feel transactional rather than community-driven.
  ## Solution
  A modern, interactive platform that blends auction capabilities with social networking features:
-# Auction Capabilities
+1. Auction Capabilities
 Create, manage, and participate in auctions effortlessly.
 Options for  reserve, and instant-purchase auctions.
-# Real-time bidding with live updates.
+2. Real-time bidding with live updates.
 Social Networking Features
 User Profiles: Showcase auctions, collections, and past transactions.
 Follow & Connect: Users can follow sellers, collectors, and friends.
-# Social Feed: Post, comment, and engage on auctions and updates.
+3. Social Feed: Post, comment, and engage on auctions and updates.
 Personalized Experience
 Create personal auctions with unique themes and settings.
 Personalized notifications and auction suggestions.
 Social reputation system based on ratings and reviews.
-# Community Engagement
+4. Community Engagement
 Auction groups and communities around interests (e.g., art, collectibles).
 Host and join live auction events.
 Community-driven content and discussions.
 
 ## Implementaion of Solution
-## 🧭 Table of Contents
+1.🧭 Table of Contents
 🔐 Authentication
 🏷️ Auction Features
 🌐 Networking & Connections
 🧠 Helper Functions
 📄 Templates & Requirements
 
-## 🔐 Authentication
-# Login
+2.🔐 Authentication
+i.Login
 Authenticates users by validating credentials and grants access to features like auctions and chats.
-# Logout
+ii. Logout
 Ends the user session and redirects to the homepage.
-# Register
+iii Register
 Handles user account creation with password validation for security.
-
-## 🏷️ Auction Features
+3. 🏷️ Auction Features
 All things related to creating, bidding, listing, and exploring auctions.
 
-# Listings
+i. Listings
 Homepage (index)
 Displays all public listings and user-created private auctions.
-# Create Listing
+ii. Create Listing
 Lets authenticated users create public or private auctions.
-# Listing Details
+iii.Listing Details
 Full view of an auction with options to bid, comment, watch, and close.
-# Find Private Listing
+iv. Find Private Listing
 Access to private listings through a unique room ID and password.
-# Categories & Filters
+v. Categories & Filters
 Category View
 Shows all listings in a selected category. Filters available by price. Authenticated users also see private listings.
-# Watchlist
+vi. Watchlist
 View and manage listings you’ve saved to monitor.
-# User Listings
+vii. User Listings
 View all auctions created by a specific user, showing private ones only to the owner.
 
-## 🌐 Networking & Connections
+4. 🌐 Networking & Connections
 These features promote interaction, engagement, and personalization across the platform.
 
 Social Feed
@@ -102,14 +101,14 @@ Overview of all chats with previews of the latest messages and unread counts.
 Start New Chat
 Initiate a new private message thread with any user.
 
-## 🧠 Helper Functions
+5.🧠 Helper Functions
 Password Checker
 Ensures password strength: 8+ characters, uppercase, lowercase, digit.
 
 Unique Code Generator
 Creates a secure 6-digit numeric code for private room access.
 
-## 📄 Templates & Requirements
+6. 📄 Templates & Requirements
 Templates Used
 login.html, register.html, index.html, listing.html, create.html
 
