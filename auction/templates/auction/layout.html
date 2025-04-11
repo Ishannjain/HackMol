@@ -360,13 +360,68 @@
             footer a {
                 transition: color 0.3s ease;
             }
-            
-            footer a:hover {
-                color: #ffeb3b;
-                text-decoration: none;
-            }
-            
+           
         }
+          
+          .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+          }
+          
+          .footer a {
+            color: #ffcc00;
+            text-decoration: none;
+          }
+          
+          .social-icons i {
+            margin: 0 10px;
+            font-size: 1.5rem;
+            color: white;
+          }
+          footer.footer {
+            position: relative;
+            left: 0;
+            right: 0;
+            width: 100vw; /* stretch full width of viewport */
+            color: white;
+            margin: 0;
+            box-sizing: border-box;
+            background-color: #0d47a1;
+            color: white;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+            text-align: center;
+          }
+          footer.footer {
+            position: relative;
+            width: 100vw;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+          }
+          html, body {
+            height: 100%;
+            margin: 0;
+          }
+          
+          .wrapper {
+            min-height: calc(100vh - 200px); /* Adjust based on footer height */
+            padding-bottom: 2rem; /* Space between content and footer */
+          }
+          
+          .footer {
+            background-color: #083d9e;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+          }
+          
+          
+          
     </style>
     <body>
         <div class="background-gavel"></div>
@@ -434,20 +489,30 @@
         {% block body %}
         
         {% endblock %}
-        <!-- Footer -->
-<footer class="mt-5 py-4 text-center text-white" style="background: linear-gradient(to right, #1a237e, #0d47a1);">
-    <div class="container">
-        <h5 class="mb-3">Auction Verse</h5>
-        <p class="mb-1">Contact us: <a href="mailto:support@auctionverse.com" class="text-warning">support@auctionverse.com</a> | Phone: +91-9876543210</p>
-        <div class="mb-3">
-            <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-white mx-2"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-        <small>&copy; 2025 Auction Verse. All rights reserved.</small>
-    </div>
-</footer>
-        </body>
+        <div style="height: 3rem;"></div>
 
+        <footer class="footer">
+            <div class="container">
+              <h2>Auction Verse</h2>
+              <p>
+                Contact us: 
+                <a href="mailto:support@auctionverse.com">support@auctionverse.com</a> | 
+                Phone: +91-9876543210
+              </p>
+              <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+              </div>
+              <p class="copyright">© 2025 Auction Verse. All rights reserved.</p>
+            </div>
+          </footer>
+        
+          
+          
+          
+        
+        </body>
+</html>
    
