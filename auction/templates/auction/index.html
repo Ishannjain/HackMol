@@ -191,7 +191,7 @@
                                     <span class="private-badge">Private</span>
                                 {% endif %}
                             </h5>
-                            <div class="listing-price">₹{{ listing.starting_bid }}</div>
+                            <div class="listing-price">₹{{ listing.current_price }}</div>
                             <p class="listing-description">{{ listing.description }}</p>
                             <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary w-100">View Details</a>
                         </div>

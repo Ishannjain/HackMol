@@ -50,7 +50,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description }}</p>
-                        <p><strong>Price(rs.): </strong>{{ listing.starting_bid }}</p>
+                        <p><strong>Price(rs.): </strong>{{ listing.current_price }}</p>
                         <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
                     </div>
                 </div>

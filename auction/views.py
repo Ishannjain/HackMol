@@ -202,9 +202,15 @@ def listing(request,listing_id):
     winner=highest_bid.user if highest_bid else None
     is_winner=winner==user
     comments=listing.comments.all().order_by("-created_at")
-
+    all_listings_of_curr_cat=Listing.objects.filter(category=listing.category,isPrivate=False,isActive=True).exclude(id=listing.id)
     message=None
     message_type=None
+    curr_price=float(listing.current_price)
+    price_margin=curr_price*0.1
+    listing_in_range=[]
+    for lis in all_listings_of_curr_cat:
+        if float(lis.current_price)>=(curr_price-price_margin) and float(lis.current_price)<=(curr_price+price_margin):
+            listing_in_range.append(lis)
     #handling post requests for bid,watchlist_toggle,close auction,comment
     if request.method=='POST':
         if not request.user.is_authenticated:
@@ -267,7 +273,8 @@ def listing(request,listing_id):
         "is_winner":is_winner,
         "comments":comments,
         "message":message,
-        "message_type":message_type
+        "message_type":message_type,
+        "listing_in_range":listing_in_range
     })
 
 
