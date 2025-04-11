@@ -279,6 +279,29 @@ def watchlist(request,user_id):
 
 
 def category(request,category_name):
+    if not request.user.is_authenticated:
+        category = Category.objects.filter(title = category_name).first()
+        # Get all public listings and private listings owned by the current user
+        listings = Listing.objects.filter(
+            category = category,
+            isPrivate = False
+        )
+
+        # Get price range parameters from request
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+
+        # Apply price range filters if provided
+        if min_price:
+            listings = listings.filter(starting_bid__gte=float(min_price))
+        if max_price:
+            listings = listings.filter(starting_bid__lte=float(max_price))
+
+        return render(request,"auction/category.html",{
+            "listings":listings,
+            "category_name":category_name
+        })
+        
     category = Category.objects.filter(title = category_name).first()
     # Get all public listings and private listings owned by the current user
     listings = Listing.objects.filter(
