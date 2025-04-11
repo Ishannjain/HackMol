@@ -357,6 +357,15 @@
             padding: 2px 6px;
             font-size: 0.8em;
             margin-left: 5px;
+            footer a {
+                transition: color 0.3s ease;
+            }
+            
+            footer a:hover {
+                color: #ffeb3b;
+                text-decoration: none;
+            }
+            
         }
     </style>
     <body>
@@ -420,7 +429,25 @@
             {% endif %}
         </ul>
 
-        <hr>
+        
+
         {% block body %}
+        
         {% endblock %}
+        <!-- Footer -->
+<footer class="mt-5 py-4 text-center text-white" style="background: linear-gradient(to right, #1a237e, #0d47a1);">
+    <div class="container">
+        <h5 class="mb-3">Auction Verse</h5>
+        <p class="mb-1">Contact us: <a href="mailto:support@auctionverse.com" class="text-warning">support@auctionverse.com</a> | Phone: +91-9876543210</p>
+        <div class="mb-3">
+            <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-white mx-2"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <small>&copy; 2025 Auction Verse. All rights reserved.</small>
+    </div>
+</footer>
+        </body>
+
    
