@@ -3,11 +3,15 @@ A social-driven auction platform that fuses real-time bidding with user networki
 ## Problem Statement
 Traditional auction platforms are limited to basic bidding functions and lack interactive features. Users cannot engage, follow, or create personal auctions seamlessly, reducing the potential for personalized and engaging auction experiences.
 Traditional auction platforms often suffer from:
-# Limited Functionality: Basic bidding features without social or interactive elements.
-# Lack of Personalization: No options for users to create or customize their own auctions.
-# Minimal Engagement: Absence of social features like profiles, posts, or networking.
-# Isolated Experiences: Auctions feel transactional rather than community-driven.
- ## Solution
+# Limited Functionality: 
+Basic bidding features without social or interactive elements.
+# Lack of Personalization: 
+No options for users to create or customize their own auctions.
+# Minimal Engagement: 
+Absence of social features like profiles, posts, or networking.
+# Isolated Experiences:
+Auctions feel transactional rather than community-driven.
+## Solution
  A modern, interactive platform that blends auction capabilities with social networking features:
 1. Auction Capabilities
 Create, manage, and participate in auctions effortlessly.
