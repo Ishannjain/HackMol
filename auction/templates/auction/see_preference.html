@@ -1,0 +1,23 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h3 class="mb-4">Listings Based on Your Preferences</h3>
+
+    {% if listings %}
+        {% for listing in listings %}
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.title }}</h5>
+                    <p class="card-text">{{ listing.description }}</p>
+                    <p><strong>Category:</strong> {{ listing.category }}</p>
+                    <p><strong>Current Price:</strong> Rs. {{ listing.current_price }}</p>
+                    <a href="{% url 'listing' listing.id %}" class="btn btn-outline-primary">View Listing</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No listings match your preferences at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

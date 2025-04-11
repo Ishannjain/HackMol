@@ -73,3 +73,12 @@ class Chat(models.Model):
 
     def __str__(self):
         return f"From {self.sender} to {self.receiver} at {self.timestamp}"
+    
+class Preference(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='preference')
+    categories = models.ManyToManyField(Category, blank=True)
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Preferences"

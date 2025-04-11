@@ -590,3 +590,54 @@ def new_chat(request):
     return render(request, "auction/new_chat.html", {
         "users": users
     })
+
+
+
+def set_preference(request):
+    categories = Category.objects.all()
+    try:
+        preference = request.user.preference
+    except Preference.DoesNotExist:
+        preference = Preference.objects.create(user=request.user)
+
+    if request.method == "POST":
+        selected_categories = request.POST.getlist('categories')
+        min_price = request.POST.get("min_price")
+        max_price = request.POST.get("max_price")
+
+        preference.min_price = min_price if min_price else None
+        preference.max_price = max_price if max_price else None
+        preference.save()
+        preference.categories.set(selected_categories)
+        return HttpResponseRedirect(reverse("see_preference"))
+
+    selected_ids = preference.categories.values_list('id', flat=True)
+    return render(request, "auction/set_preference.html", {
+        "categories": categories,
+        "selected_ids": selected_ids,
+        "min_price": preference.min_price,
+        "max_price": preference.max_price,
+    })
+
+
+def see_preference(request):
+    try:
+        preference = request.user.preference
+        listings = Listing.objects.filter(isActive=True, isPrivate=False)
+
+        if preference.categories.exists():
+            listings = listings.filter(category__in=preference.categories.all())
+
+        filtered_listings = []
+        for listing in listings:
+            price = listing.current_price
+            if (preference.min_price is None or price >= preference.min_price) and \
+               (preference.max_price is None or price <= preference.max_price):
+                filtered_listings.append(listing)
+
+    except Preference.DoesNotExist:
+        filtered_listings = []
+
+    return render(request, "auction/see_preference.html", {
+        "listings": filtered_listings
+    })
