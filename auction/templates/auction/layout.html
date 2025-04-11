@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>{% block title %}Auction House{% endblock %}</title>
+        <title>{% block title %}Auction Verse{% endblock %}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <link href="{% static 'auction/styles.css' %}" rel="stylesheet">
@@ -304,15 +304,67 @@
             font-weight: bold;
         }
         
-        
+        /* Chat Navigation Bar */
+        .chat-nav {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 50px;
+            padding: 10px 25px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
 
+        .chat-nav-item {
+            position: relative;
+            margin: 0 10px;
+        }
+
+        .chat-nav-link {
+            color: #0d47a1;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: 30px;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-nav-link i {
+            font-size: 1.2em;
+        }
+
+        .chat-nav-link:hover {
+            background-color: rgba(13, 71, 161, 0.1);
+        }
+
+        .chat-nav-link.active {
+            color: #fbc02d;
+            background-color: rgba(251, 192, 45, 0.1);
+        }
+
+        .unread-badge {
+            background-color: #f44336;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
     </style>
     <body>
         <div class="background-gavel"></div>
 
         <div class="auction-header">
             <img src="{% static 'images/logo.png' %}" alt="Gavel" class="gavel-icon">
-            <h1 class="auction-title">Auction House</h1>
+            <h1 class="auction-title">Auction Verse</h1>
         </div>
 
         
@@ -361,6 +413,7 @@
                 </li>
             {% endif %}
         </ul>
+
         <hr>
         {% block body %}
         {% endblock %}

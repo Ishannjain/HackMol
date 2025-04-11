@@ -22,5 +22,8 @@ urlpatterns = [
     path("unlike/<int:post_id>", views.unlike, name="unlike"),
     path("listings/<int:user_id>", views.user_listing, name="user_listings"),
     path("delete/<int:post_id>", views.delete_post, name="delete_post"),
-    path("findListing/", views.findListing, name="findListing")
+    path("findListing/", views.findListing, name="findListing"),
+    path("chat/<int:user_id>", views.chat, name="chat"),
+    path("chats/", views.chat_list, name="chat_list"),
+    path("chats/new/", views.new_chat, name="new_chat")
 ]

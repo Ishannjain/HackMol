@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 import json
 from django.http import JsonResponse, HttpResponseForbidden
-
+from django.db import models
 
 from .models import *
 
@@ -446,3 +446,98 @@ def delete_post(request, post_id):
         except Post.DoesNotExist:
             return JsonResponse({"error": "Post not found."}, status=404)
     return JsonResponse({"error": "Invalid request method."}, status=400)
+
+def chat(request, user_id):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    
+    other_user = get_object_or_404(User, pk=user_id)
+    messages = Chat.objects.filter(
+        (models.Q(sender=request.user) & models.Q(receiver=other_user)) |
+        (models.Q(sender=other_user) & models.Q(receiver=request.user))
+    ).order_by('timestamp')
+
+    # Mark messages as read
+    Chat.objects.filter(sender=other_user, receiver=request.user, is_read=False).update(is_read=True)
+
+    if request.method == "POST":
+        message = request.POST.get("message")
+        if message:
+            Chat.objects.create(
+                sender=request.user,
+                receiver=other_user,
+                message=message
+            )
+            return HttpResponseRedirect(reverse("chat", args=[user_id]))
+
+    return render(request, "auction/chat.html", {
+        "other_user": other_user,
+        "messages": messages
+    })
+
+def chat_list(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    
+    # Get all users that the current user has chatted with
+    chat_users = User.objects.filter(
+        models.Q(sent_messages__receiver=request.user) |
+        models.Q(received_messages__sender=request.user)
+    ).distinct()
+
+    # Prepare chat data
+    chat_data = []
+    for user in chat_users:
+        last_message = Chat.objects.filter(
+            (models.Q(sender=request.user) & models.Q(receiver=user)) |
+            (models.Q(sender=user) & models.Q(receiver=request.user))
+        ).order_by('-timestamp').first()
+
+        unread_count = Chat.objects.filter(
+            sender=user,
+            receiver=request.user,
+            is_read=False
+        ).count()
+
+        chat_data.append({
+            'user': user,
+            'last_message': last_message,
+            'unread_count': unread_count
+        })
+
+    return render(request, "auction/chat_list.html", {
+        "chat_data": chat_data
+    })
+
+def new_chat(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
+    
+    if request.method == "POST":
+        recipient_id = request.POST.get("recipient")
+        recipient = get_object_or_404(User, id=recipient_id)
+        
+        # Check if chat already exists
+        existing_chat = Chat.objects.filter(
+            sender=request.user,
+            receiver=recipient
+        ).first()
+        
+        if existing_chat:
+            return HttpResponseRedirect(reverse("chat", args=[recipient.id]))
+        
+        # Create new chat with an initial message
+        chat = Chat.objects.create(
+            sender=request.user,
+            receiver=recipient,
+            message="Chat started",
+            is_read=True
+        )
+        
+        return HttpResponseRedirect(reverse("chat", args=[recipient.id]))
+    
+    # GET request - show form to select recipient
+    users = User.objects.exclude(id=request.user.id)
+    return render(request, "auction/new_chat.html", {
+        "users": users
+    })

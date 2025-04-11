@@ -1,0 +1,32 @@
+{% extends "auction/layout.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Start a New Chat</h2>
+                    
+                    <form method="POST" action="{% url 'new_chat' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="recipient">Select User to Chat With:</label>
+                            <select class="form-control" id="recipient" name="recipient" required>
+                                <option value="">Choose a user...</option>
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Start Chat</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
