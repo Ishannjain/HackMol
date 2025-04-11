@@ -177,6 +177,20 @@
         color: #999;
         margin-left: 10px;
     }
+
+    .like-btn {
+        cursor: pointer;
+        color: #6c757d;
+        transition: all 0.3s ease;
+    }
+
+    .like-btn.liked {
+        color: #dc3545;
+    }
+
+    .like-btn:hover {
+        transform: scale(1.2);
+    }
 </style>
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -235,10 +249,17 @@
                                 <span class="text-muted">{{ post.date }}</span>
                             </div>
                             <div>
-                                <span class="like-icon" data-post-id="{{ post.id }}">
-                                    <i class="fas fa-heart {% if user in post.likes.all %}text-danger{% else %}text-muted{% endif %}"></i>
-                                    <span class="likes-count">{{ post.likes.count }}</span>
-                                </span>
+                                {% if user.is_authenticated %}
+                                    <span class="like-btn {% if user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                                        <i class="fas fa-heart"></i>
+                                        <span class="likes-count">{{ post.likes.count }}</span>
+                                    </span>
+                                {% else %}
+                                    <span class="like-btn">
+                                        <i class="fas fa-heart"></i>
+                                        <span class="likes-count">{{ post.likes.count }}</span>
+                                    </span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -347,23 +368,31 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Like functionality
-        document.querySelectorAll('.like-icon').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const postId = this.dataset.postId;
-                const heartIcon = this.querySelector('i');
-                const likesCount = this.querySelector('.likes-count');
-                
-                fetch(`/like/${postId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message === "Like added!") {
-                            heartIcon.classList.add('text-danger');
-                            likesCount.textContent = parseInt(likesCount.textContent) + 1;
-                        } else {
-                            heartIcon.classList.remove('text-danger');
-                            likesCount.textContent = parseInt(likesCount.textContent) - 1;
-                        }
-                    });
+        document.querySelectorAll('.like-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('liked')) {
+                    // Like the post
+                    fetch(`/like/${this.dataset.postId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Like added!") {
+                                this.classList.add('liked');
+                                const likesCount = this.querySelector('.likes-count');
+                                likesCount.textContent = parseInt(likesCount.textContent) + 1;
+                            }
+                        });
+                } else {
+                    // Unlike the post
+                    fetch(`/unlike/${this.dataset.postId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === "Like removed!") {
+                                this.classList.remove('liked');
+                                const likesCount = this.querySelector('.likes-count');
+                                likesCount.textContent = parseInt(likesCount.textContent) - 1;
+                            }
+                        });
+                }
             });
         });
     });
