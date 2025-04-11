@@ -65,7 +65,7 @@ View and manage listings you’ve saved to monitor.
 vii. User Listings
 View all auctions created by a specific user, showing private ones only to the owner.
 
-4. 🌐 Networking & Connections
+4.🌐 Networking & Connections
 These features promote interaction, engagement, and personalization across the platform.
 
 Social Feed
